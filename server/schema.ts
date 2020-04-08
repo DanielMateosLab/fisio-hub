@@ -10,11 +10,12 @@ const typeDefs = gql`
     status: AppointmentStatus
     payment: Payment
   }
+
   type Event {
     id: ID!
     type: String
     date: String
-    timeFragment: TimeFragment
+    duration: Int
     proffesionals: [Proffesional]
   }
 
