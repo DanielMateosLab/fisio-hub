@@ -3,34 +3,67 @@ import { gql } from 'apollo-server'
 const typeDefs = gql`
   type Appointment {
     id: ID!
-    date: Int
+    date: String
+    service: Service
     proffesional: Proffesional
     patient: Patient
     status: AppointmentStatus
     payment: Payment
   }
+  type Event {
+    id: ID!
+    type: String
+    date: String
+    timeFragment: TimeFragment
+    proffesionals: [Proffesional]
+  }
+
   type Service {
     id: ID!
     name: String
-    "Expressed in minutes"
     duration: Int
     prize: Float
   }
+
   type Proffesional {
     id: ID!
     name: String
     appointments: [Appointment]
+    events: [Event]
+    weekSchedule: [Workday]
+    timeScheduleSettings: TimeScheduleSettings
   }
+  type TimeScheduleSettings {
+    proffesionals: [Proffesional]
+    timeFrame: TimeFrame
+  }
+
   type Patient {
     id: ID!
     name: String
     appointments: [Appointment]
   }
+
   type Payment {
     id: ID!
     cash: Int
     card: Int
     appointment: Appointment
+  }
+
+  type Workday {
+    day: String
+    fragments: [TimeFragment]
+  }
+
+  type TimeFragment {
+    start: DayPoint
+    end: DayPoint
+  }
+
+  type DayPoint {
+    hour: Int
+    minute: Int
   }
 
   enum AppointmentStatus {
@@ -39,14 +72,14 @@ const typeDefs = gql`
     DONE
   }
 
-  type Query {
-    "Fetch appointments by id"
-    fetchAppointments(id: ID!): [Appointment]
+  enum TimeFrame {
+    DAY
+    WEEK
+    MONTH
   }
-  type Mutation {
-    createAppointment(): [Appointment]
-    updateAppointment(): [Appointment]
-    deleteAppointment(): [Appointment]
+
+  type Query {
+    fetchAppointments(id: ID!): [Appointment]
   }
 `
 

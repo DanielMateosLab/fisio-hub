@@ -1,8 +1,8 @@
 {
     "env": {
-        "browser": true,
+        "commonjs": true,
         "es6": true,
-        "commonjs": true
+        "node": true
     },
     "extends": [
         "eslint:recommended",
@@ -15,8 +15,7 @@
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+        "ecmaVersion": 2018
     },
     "plugins": [
         "@typescript-eslint"
