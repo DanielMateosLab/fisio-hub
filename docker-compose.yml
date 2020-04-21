@@ -1,0 +1,25 @@
+version: "3.7"
+
+services: 
+  
+  mongo:
+    image: mongo:4.2.5
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${DB_USERNAME?Missing DB username}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_PW?Missing DB password}"
+    volumes: 
+      - memorizadb:/data/db
+
+  server:
+    image: node:12.16.1
+    command: sh -c "npx wait-port mongo:27017 && yarn dev"
+    working_dir: /fisio-hub
+    volumes: 
+      - ./:/fisio-hub
+    environment: 
+      DB_URI: "mongodb://${DB_USERNAME}:${DB_PW}@mongo"
+    ports:
+      - 3000:3000
+    
+volumes: 
+  memorizadb:

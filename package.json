@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "docker": "docker-compose up -d && docker-compose logs -f server",
     "build": "next build",
     "start": "next start",
     "test": "jest"
