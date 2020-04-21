@@ -1,31 +1,27 @@
 import { MongoClient } from 'mongodb'
-import { NextApiRequest, NextApiResponse } from 'next'
-import nextConnect from 'next-connect'
+import { CustomApiHandler, CustomApiRequest } from '../utils/types'
+import { NextApiResponse } from 'next'
 
-const client = new MongoClient(process.env.DB_URI, {
+const client = new MongoClient(process.env.DB_URI!, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 
-async function database(req: NextApiRequest, res: NextApiResponse, next: Function) {
-  /** TODO: 
-   * Instead of passing the db to the request, just inject it to the DAOs
-   * Check the env vars using static generation in one of the pages or
-   * use a singleton-style and check them only once. Maybe the latter is the better.
-   *  */
+const database = (handler: CustomApiHandler) => async (
+  req: CustomApiRequest,
+  res: NextApiResponse
+) => {
   try {
-   if (!client.isConnected()) await client.connect()
-   req.dbClient = client
-   req.db = client.db(process.env.DB_NAME)
+    if (!client.isConnected()) {
+      await client.connect()
+    }
 
-   return next() 
+    req.db = client.db(process.env.DB_NAME)
+    
+    return handler(req, res)
   } catch (err) {
-    res.status(503)
+    res.status(503).send(err.message)    
   }
 }
 
-const middleware = nextConnect()
-
-middleware.use(database)
-
-export default middleware
+export default database
