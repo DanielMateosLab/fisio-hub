@@ -4,43 +4,27 @@ import {ProffesionalInfo} from "../utils/types";
 import { Typography, TextField, Button, Container, Grid } from '@material-ui/core'
 
 const Register = () => {
-  const [ email, setEmail ] = useState('')
-  const [ name, setName ] = useState('')
-  const [ password, setPassword ] = useState('')
+  const [ inputs, setInputs ] = useState({} as ProffesionalInfo)
   const [ error, setError ] = useState('')
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.currentTarget
+  const { email, name, password } = inputs
 
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // TODO: implement validation
-    switch (name) {
-      case 'email': {
-        setEmail(value)
-        break
-      }
-      case 'name': {
-        setName(value)
-        break
-      }
-      case 'password': {
-        setPassword(value)
-        break
-      }
-    }
+    const { value, name } = event.currentTarget
+    setInputs({
+      ...inputs,
+      [name]: value
+    })
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const results: ProffesionalInfo = {
-      name,
-      password,
-      email
-    }
 
     // TODO: use SWR Hook
     const res = await fetch('/api/register', {
       method: 'post',
-      body: JSON.stringify(results)
+      body: JSON.stringify(inputs)
     })
 
     const { error } = await res.json()
