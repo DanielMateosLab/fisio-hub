@@ -33,7 +33,7 @@ export default () => {
           : '¿Ya estás registrado? '
         }
         <Link href="#" onClick={switchPage}>
-          {titles[1]}
+          { index ==  0 ? titles[1] : titles[0] }
         </Link>
       </Typography>
     </Container>

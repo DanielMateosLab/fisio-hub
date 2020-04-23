@@ -42,7 +42,8 @@ type ResultValues = string
 interface UseForm {
   <T extends InputsSchema>(
     inputSchema: T,
-    submitCallback: (results: Record<keyof T, ResultValues>) => void
+    submitCallback: (results: Record<keyof T, ResultValues>) => any,
+    submitButtonText: string
   ): React.ReactNode
 }
 
@@ -51,7 +52,7 @@ interface UseForm {
  *  @param inputsSchema Object with the corresponding form elements and their type.
  *  @returns form The form component
  * */
-const useForm: UseForm = (inputsSchema, submitCallback) => {
+const useForm: UseForm = (inputsSchema, submitCallback, submitButtonText) => {
   let initialState: InputsState = {}
   let formElements = []
 
@@ -73,6 +74,8 @@ const useForm: UseForm = (inputsSchema, submitCallback) => {
 
   /** Removes properties related to the form management returning only the value. */
   const parseInputs = (inputs: InputsState): Record<keyof typeof inputsSchema, ResultValues> => {
+    // This any time leds to typescript compiling errors when typing the SubmitFunction return value
+    // Try to find a better solution than using Record
     let result: any = {}
 
     for (const property in inputs) {
@@ -107,15 +110,10 @@ const useForm: UseForm = (inputsSchema, submitCallback) => {
   const [ error, setError ] = useState('')
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    try {
       event.preventDefault()
 
-      await submitCallback(parseInputs(inputs))
-      setError('')
-      return null
-    } catch (e) {
-      setError(e.message)
-    }
+      const error = await submitCallback(parseInputs(inputs))
+      error ? setError(error) : setError('')
   }
 
 
@@ -146,11 +144,13 @@ const useForm: UseForm = (inputsSchema, submitCallback) => {
           })
         }
         <Grid item xs={12} container justify="center">
-          <Button style={{marginTop: 16}} variant="contained" type="submit" color="primary">Iniciar sesión</Button>
+          <Button style={{marginTop: 16}} variant="contained" type="submit" color="primary">
+            { submitButtonText }
+          </Button>
         </Grid>
         <Grid item xs={12}>
           { error &&
-          <Typography variant="body1" color="error"> error </Typography>
+          <Typography variant="body1" color="error"> { error } </Typography>
           }
         </Grid>
       </Grid>

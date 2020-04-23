@@ -1,6 +1,3 @@
-import Head from 'next/head'
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
 import useForm from "../utils/useForm";
 import React from 'react'
 
@@ -30,16 +27,22 @@ const Register = () => {
       }
     },
     async (results) => {
-      delete results.repeatPassword
+      try {
+        delete results.repeatPassword
 
-      const res = await fetch('/api/register', {
-        method: 'post',
-        body: JSON.stringify(results)
-      })
+        const res = await fetch('/api/register', {
+          method: 'post',
+          body: JSON.stringify(results)
+        })
 
-      const { error } = await res.json()
-      if (error) throw new Error(error)
-    }
+        const {error} = await res.json()
+        if (error) return error
+        return null
+      } catch (e) {
+        return e.message
+      }
+    },
+    'Registrarme'
   )
 
   return <>{form}</>

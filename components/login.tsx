@@ -1,7 +1,4 @@
 import useForm from '../utils/useForm'
-import Typography from "@material-ui/core/Typography"
-import Container from "@material-ui/core/Container"
-import Head from "next/head"
 import React from "react"
 
 const Login = () => {
@@ -13,12 +10,13 @@ const Login = () => {
       },
       password: {
         type: "password",
-        label: "Password"
+        label: "Contraseña"
       },
     },
     results => {
       return console.log(JSON.stringify(results))
-    }
+    },
+    'Iniciar sesión'
   )
 
   return <>{form}</>
