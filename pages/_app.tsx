@@ -1,6 +1,6 @@
 import { AppProps } from 'next/app'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { ThemeProvider } from "@material-ui/styles";
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import theme from '../components/theme'
 
 // import App from 'next/app'

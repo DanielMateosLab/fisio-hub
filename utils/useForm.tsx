@@ -1,4 +1,4 @@
-import React, { FormEvent, ChangeEvent, useState} from "react"
+import React, { FormEvent, ChangeEvent, useState } from "react"
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -8,16 +8,21 @@ import TextField from "@material-ui/core/TextField";
 
 /** HTML Input Elements supported. Depends on the type of value created in the form state.
  * Currently an empty string is created for all elements */
-type SupportedTypes = 'email' | 'password' | 'text'
+type SupportedHtmlElementTypes = 'email' | 'password' | 'text'
 
-type ValidationResponse = { error?: string }
-type ValidationFunction = (value: any) => ValidationResponse
+interface ValidationFunction {
+  (value: any, formValues?: any): string | void
+}
 
 interface InputsSchema {
   [key: string]: {
-    type: SupportedTypes
+    type: SupportedHtmlElementTypes
     label: string
-    /** Optional validation function */
+    /**
+     * @param value The value of the input element
+     * @param formValues The an object containing all the inputs values
+     * @returns reason - If validation fails, a string containing information about the error
+     */
     validationFunction?: ValidationFunction
   }
 }
@@ -29,25 +34,24 @@ interface InputsState {
   }
 }
 
-interface FormResults {
-  [key: string]: string | boolean
-}
-/** The callback fired when submitting the form.
- * Errors are caught and their message is printed above the submit button */
-type SubmitCallback = (results: FormResults) => Promise<void>
+/** Type of the result values.
+ * Depends on {SupportedHtmlElementTypes}
+ */
+type ResultValues = string
 
 interface UseForm {
-  <InputsSchema>(inputSchema: InputsSchema, submitFunction: (results: Record<keyof InputsSchema, any>) => void): {
-    form: React.ReactNode
-  }
+  <T extends InputsSchema>(
+    inputSchema: T,
+    submitCallback: (results: Record<keyof T, ResultValues>) => void
+  ): React.ReactNode
 }
-
 
 /** Form Builder Hook
  *  @param submitCallback Function called when the form is submitted.
  *  @param inputsSchema Object with the corresponding form elements and their type.
+ *  @returns form The form component
  * */
-const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => {
+const useForm: UseForm = (inputsSchema, submitCallback) => {
   let initialState: InputsState = {}
   let formElements = []
 
@@ -55,8 +59,8 @@ const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => 
   for (const property in inputsSchema) {
     // TODO: set the initial state values depending on the type.
     // Example: for checkbox it should be the boolean "false"
+    // if(inputsSchema.type == "checkbox" || "select") ...
     if (inputsSchema.hasOwnProperty(property)) {
-      // if(inputsSchema.type == "checkbox" || "select") ...
       initialState[property] = {
         value: '',
         error: ''
@@ -67,15 +71,27 @@ const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => 
 
   const [ inputs, setInputs ] = useState(initialState)
 
+  /** Removes properties related to the form management returning only the value. */
+  const parseInputs = (inputs: InputsState): Record<keyof typeof inputsSchema, ResultValues> => {
+    let result: any = {}
+
+    for (const property in inputs) {
+      result[property] = inputs[property].value
+    }
+
+    return result
+  }
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.persist()
 
     let error = ''
     const { value, name } = event.currentTarget
+
     const validationFunction = inputsSchema[name].validationFunction
 
     if (validationFunction) {
-      const { error: validationError } = validationFunction(value)
+      const validationError = validationFunction(value, parseInputs(inputs))
       error = validationError ? validationError : ''
     }
 
@@ -87,17 +103,6 @@ const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => 
       }}))
   }
 
-  /** Removes properties related to the form management returning only the value. */
-  const parseInputs = (inputs: InputsState): FormResults => {
-    let result: any = {}
-
-    for (const property in inputs) {
-      result[property] = inputs[property].value
-    }
-
-    return result
-  }
-
   // Property where the submitCallback error message is stored
   const [ error, setError ] = useState('')
 
@@ -105,7 +110,7 @@ const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => 
     try {
       event.preventDefault()
 
-      await submitCallback()
+      await submitCallback(parseInputs(inputs))
       setError('')
       return null
     } catch (e) {
@@ -152,10 +157,7 @@ const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => 
     </form>
   )
 
-  return {
-    inputs: parseInputs(inputs),
-    form
-  }
+  return form
 }
 
 export default useForm
