@@ -13,7 +13,7 @@ const Login = () => {
         label: "Contraseña"
       },
     },
-    results => {
+    async results => {
       return console.log(JSON.stringify(results))
     },
     'Iniciar sesión'
