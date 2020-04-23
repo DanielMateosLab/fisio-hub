@@ -29,16 +29,18 @@ interface InputsState {
   }
 }
 
-type UseForm = <IS>(inputSchema: IS, submitFunction: (results: typeof parseResult) => void) => {
-  form: React.ReactNode
-};
-
 interface FormResults {
   [key: string]: string | boolean
 }
 /** The callback fired when submitting the form.
  * Errors are caught and their message is printed above the submit button */
 type SubmitCallback = (results: FormResults) => Promise<void>
+
+interface UseForm {
+  <InputsSchema>(inputSchema: InputsSchema, submitFunction: (results: Record<keyof InputsSchema, any>) => void): {
+    form: React.ReactNode
+  }
+}
 
 
 /** Form Builder Hook
