@@ -1,75 +1,76 @@
 import React, { FormEvent, ChangeEvent, useState} from "react"
-import {Button, Grid, TextField, Typography} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
 
-// TODO: briefly document how the hook works
-// Make tests
+// TODO: Make tests
+
+/** HTML Input Elements supported. Depends on the type of value created in the form state.
+ * Currently an empty string is created for all elements */
 type SupportedTypes = 'email' | 'password' | 'text'
 
 type ValidationResponse = { error?: string }
 type ValidationFunction = (value: any) => ValidationResponse
 
-type SubmitCallback = () => Promise<void>
-
-interface InputsShape {
+interface InputsSchema {
   [key: string]: {
     type: SupportedTypes
     label: string
+    /** Optional validation function */
     validationFunction?: ValidationFunction
   }
 }
-interface InitialState {
+/** How the form elements state is kept */
+interface InputsState {
   [key: string]: {
     value: string | boolean
     error: string
   }
 }
 
-/** Hook to create a form
+type UseForm = <IS>(inputSchema: IS, submitFunction: (results: typeof parseResult) => void) => {
+  form: React.ReactNode
+};
+
+interface FormResults {
+  [key: string]: string | boolean
+}
+/** The callback fired when submitting the form.
+ * Errors are caught and their message is printed above the submit button */
+type SubmitCallback = (results: FormResults) => Promise<void>
+
+
+/** Form Builder Hook
  *  @param submitCallback Function called when the form is submitted.
- *  @param inputsShape Object with the corresponding form elements and their type.
+ *  @param inputsSchema Object with the corresponding form elements and their type.
  * */
-const useForm = (inputsShape: InputsShape, submitCallback: SubmitCallback) => {
-  let initialState: InitialState = {}
+const useForm = (inputsSchema: InputsSchema, submitCallback: SubmitCallback) => {
+  let initialState: InputsState = {}
   let formElements = []
 
-  for (const property in inputsShape) {
+  // Set the initialState and the formElements out of the inputSchema
+  for (const property in inputsSchema) {
     // TODO: set the initial state values depending on the type.
     // Example: for checkbox it should be the boolean "false"
-    if (inputsShape.hasOwnProperty(property)) {
-      // if(inputsShape.type == "checkbox" || "select") ...
-      initialState = {
-        ...initialState,
-        [property]: {
-          value: '',
-          error: ''
-        }
+    if (inputsSchema.hasOwnProperty(property)) {
+      // if(inputsSchema.type == "checkbox" || "select") ...
+      initialState[property] = {
+        value: '',
+        error: ''
       }
       formElements.push(property)
     }
   }
 
   const [ inputs, setInputs ] = useState(initialState)
-  const [ error, setError ] = useState('')
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    try {
-      if (event) {
-        event.preventDefault()
-
-        await submitCallback()
-      }
-        return null
-    } catch (e) {
-      setError(e.message)
-    }
-  }
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     event.persist()
 
     let error = ''
     const { value, name } = event.currentTarget
-    const validationFunction = inputsShape[name].validationFunction
+    const validationFunction = inputsSchema[name].validationFunction
 
     if (validationFunction) {
       const { error: validationError } = validationFunction(value)
@@ -84,7 +85,8 @@ const useForm = (inputsShape: InputsShape, submitCallback: SubmitCallback) => {
       }}))
   }
 
-  const parseInputs = (inputs: InitialState) => {
+  /** Removes properties related to the form management returning only the value. */
+  const parseInputs = (inputs: InputsState): FormResults => {
     let result: any = {}
 
     for (const property in inputs) {
@@ -94,12 +96,28 @@ const useForm = (inputsShape: InputsShape, submitCallback: SubmitCallback) => {
     return result
   }
 
+  // Property where the submitCallback error message is stored
+  const [ error, setError ] = useState('')
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    try {
+      event.preventDefault()
+
+      await submitCallback()
+      setError('')
+      return null
+    } catch (e) {
+      setError(e.message)
+    }
+  }
+
+
   const form = (
     <form onSubmit={handleSubmit} >
       <Grid container>
         {
           formElements.map(element => {
-            const { type, label } = inputsShape[element]
+            const { type, label } = inputsSchema[element]
             const { value, error } = inputs[element]
 
             return (
