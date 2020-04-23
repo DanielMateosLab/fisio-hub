@@ -1,6 +1,8 @@
 import React, { FormEvent, ChangeEvent, useState} from "react"
 import {Button, Grid, TextField, Typography} from "@material-ui/core";
 
+// TODO: briefly document how the hook works
+// Make tests
 type SupportedTypes = 'email' | 'password' | 'text'
 
 type ValidationResponse = { error?: string }
