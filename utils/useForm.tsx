@@ -39,17 +39,22 @@ interface InputsState {
  */
 type ResultValues = string
 
+type FormResult<T> = {
+  [P in keyof T]: ResultValues
+}
+
 interface UseForm {
   <T extends InputsSchema>(
     inputSchema: T,
-    submitCallback: (results: Record<keyof T, ResultValues>) => any,
+    submitCallback: (results: FormResult<T>) => Promise<string | void>,
     submitButtonText: string
   ): React.ReactNode
 }
 
 /** Form Builder Hook
- *  @param submitCallback Function called when the form is submitted.
  *  @param inputsSchema Object with the corresponding form elements and their type.
+ *  @param submitCallback Function called when the form is submitted.
+ *  @param submitButtonText String palced in the submit button
  *  @returns form The form component
  * */
 const useForm: UseForm = (inputsSchema, submitCallback, submitButtonText) => {
@@ -73,7 +78,7 @@ const useForm: UseForm = (inputsSchema, submitCallback, submitButtonText) => {
   const [ inputs, setInputs ] = useState(initialState)
 
   /** Removes properties related to the form management returning only the value. */
-  const parseInputs = (inputs: InputsState): Record<keyof typeof inputsSchema, ResultValues> => {
+  const parseInputs = (inputs: InputsState): FormResult<typeof inputsSchema> => {
     // This any time leds to typescript compiling errors when typing the SubmitFunction return value
     // Try to find a better solution than using Record
     let result: any = {}
@@ -117,7 +122,7 @@ const useForm: UseForm = (inputsSchema, submitCallback, submitButtonText) => {
   }
 
 
-  const form = (
+  return (
     <form onSubmit={handleSubmit} >
       <Grid container>
         {
@@ -156,8 +161,6 @@ const useForm: UseForm = (inputsSchema, submitCallback, submitButtonText) => {
       </Grid>
     </form>
   )
-
-  return form
 }
 
 export default useForm
