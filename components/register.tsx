@@ -26,7 +26,7 @@ const Register = () => {
         }
       }
     },
-    async (results) => {
+    async (results): Promise<void | string> => {
       try {
         delete results.repeatPassword
 
@@ -37,7 +37,7 @@ const Register = () => {
 
         const {error} = await res.json()
         if (error) return error
-        return null
+        return
       } catch (e) {
         return e.message
       }
