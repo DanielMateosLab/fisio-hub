@@ -3,13 +3,9 @@ import { Formik, Form } from 'formik'
 import CustomTextInput from './CustomTextInput'
 import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
-import * as Yup from 'yup'
 import Typography from '@material-ui/core/Typography'
+import { loginValidationSchema } from '../utils/validation'
 
-const validationSchema = Yup.object({
-  email: Yup.string().email('La dirección de correo electrónico no es válida').required('Obligatorio'),
-  password: Yup.string().min(5, 'Debe tener 5 o más caracteres').required('Obligatorio')
-})
 
 const Login = () => {
   let submitError: string
@@ -21,7 +17,7 @@ const Login = () => {
           email: '',
           password: ''
         }}
-        validationSchema={validationSchema}
+        validationSchema={loginValidationSchema}
         onSubmit={async (values, {setSubmitting}) => {
           try {
             const res = await fetch('/api/login', {

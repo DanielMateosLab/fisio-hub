@@ -1,19 +1,11 @@
 import React from 'react'
 import { Formik, Form } from 'formik'
-import * as Yup from 'yup'
 import Grid from '@material-ui/core/Grid'
 import CustomTextInput from './CustomTextInput'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import { registerValidationSchema } from '../utils/validation'
 
-
-const validationSchema = Yup.object({
-  firstName: Yup.string().max(30, 'Debe tener 30 o menos caracteres').required('Obligatorio'),
-  lastName: Yup.string().max(30, 'Debe tener 30 o menos caracteres').required('Obligatorio'),
-  email: Yup.string().email('La dirección de correo electrónico no es válida').required('Obligatorio'),
-  password: Yup.string().min(5, 'Debe tener 5 o más caracteres').required('Obligatorio'),
-  repeatPassword: Yup.string().required('Obligatorio')
-})
 
 const Register = () => {
   let submitError: string
@@ -27,7 +19,7 @@ const Register = () => {
         password: '',
         repeatPassword: ''
       }}
-      validationSchema={validationSchema}
+      validationSchema={registerValidationSchema}
       onSubmit={async (values, { setSubmitting }) => {
         try {
           const res = await fetch('/api/register', {
@@ -47,7 +39,7 @@ const Register = () => {
         }
       }}
     >
-      {({ isSubmitting, values }) => (
+      {({ isSubmitting }) => (
         <Form>
           <Grid container justify="center">
             <CustomTextInput name="firstName" label="Nombre" />
@@ -58,11 +50,6 @@ const Register = () => {
               name="repeatPassword"
               label="Repite la contraseña"
               type="password"
-              validate={() => {
-                if (values.password !== values.repeatPassword) {
-                  return 'Las contraseñas deben coincidir'
-                }
-              }}
             />
             { submitError && (
               <Grid item style={{ marginTop: 18 }} container justify="center" xs={12}>
