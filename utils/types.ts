@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiHandler, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { Db } from "mongodb";
 
 export interface CustomApiRequest extends NextApiRequest {
