@@ -21,7 +21,7 @@ const database = (handler: CustomApiHandler) => async (
     return handler(req, res)
   } catch (err) {
     res.status(503).send({
-      error: 'Unable to connect to the database. ' + err.message
+      message: 'Unable to connect to the database. ' + err.message
     })
   }
 }
