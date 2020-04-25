@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Formik, Form } from 'formik'
 import Grid from '@material-ui/core/Grid'
 import CustomTextInput from './CustomTextInput'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import { registerValidationSchema, ValidationErrorBody } from '../utils/validation'
+import handleSubmit from '../utils/handleSubmit'
 
 
 const Register = () => {
-  let submitError: string
+  let [ submitError, setSubmitError ] = useState('')
 
   return (
     <Formik
@@ -20,29 +21,8 @@ const Register = () => {
         repeatPassword: ''
       }}
       validationSchema={registerValidationSchema}
-      onSubmit={async (values, { setSubmitting, setFieldError }) => {
-        try {
-          const res = await fetch('/api/register', {
-            method: 'post',
-            body: JSON.stringify(values)
-          })
-          if (res.status == 400) {
-            const { errors }: ValidationErrorBody = await res.json()
-            for (const fieldError of errors) {
-              const { field, message } = fieldError
-              setFieldError(field, message)
-            }
-            return
-          }
-          if (!res.ok) {
-            const { message } = await res.json()
-            submitError = message
-          }
-        } catch (e) {
-          submitError = e.message
-        } finally {
-          setSubmitting(false)
-        }
+      onSubmit={async (values, formikHelpers ) => {
+        await handleSubmit(values, formikHelpers, '/api/register', setSubmitError)
       }}
     >
       {({ isSubmitting }) => (
