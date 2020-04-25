@@ -1,12 +1,34 @@
-import { NextApiResponse } from "next";
-import database from "../../storage/database";
-import { CustomApiRequest, CustomApiHandler } from "../../utils/types";
-import ProffesionalsDAO from "../../storage/proffesionalsDAO";
+import database from "../../storage/database"
+import { CustomApiHandler } from "../../utils/types"
+import ProffesionalsDAO from "../../storage/proffesionalsDAO"
+import { loginValidationSchema, ValidationErrorBody } from '../../utils/validation'
 
-const handler: CustomApiHandler = (req: CustomApiRequest, res: NextApiResponse) => {
-  ProffesionalsDAO.injectDB(req.db)
-  // TODO: Validation with Yup (extract Yup validation schemas to utils)
-  res.status(400).json({ error: 'Mock Error' })
+const handler: CustomApiHandler = async (req, res) => {
+  const { method } = req
+
+  if (method == 'POST') {
+    await postHandler(req, res)
+  }
+
+  res.setHeader('Allow', ['POST'])
+  res.status(405).json({ message: 'Method not allowed' })
+}
+
+const postHandler: CustomApiHandler = async (req, res) => {
+  try {
+    const formValues = req.body
+    await loginValidationSchema.validate(formValues, {abortEarly: false})
+
+
+    ProffesionalsDAO.injectDB(req.db)
+    res.status(400).json({ message: 'mock error'})
+  } catch (e) {
+    if (e.name == 'ValidationError') {
+      const error = new ValidationErrorBody(e)
+      res.status(400).json(error)
+    }
+    res.status(500).json({ message: e.message })
+  }
 }
 
 export default database(handler)
