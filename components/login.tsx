@@ -1,11 +1,10 @@
 import React, { useState } from "react"
 import { Formik, Form } from 'formik'
-import CustomTextInput from './CustomTextInput'
+import CustomTextInput from './customTextInput'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 import { loginValidationSchema } from '../utils/validation'
 import handleSubmit from '../utils/handleSubmit'
+import FormFooter from '../components/formFooter'
 
 
 const Login = () => {
@@ -28,19 +27,7 @@ const Login = () => {
             <Grid container justify="center">
               <CustomTextInput name="email" label="Correo electrónico"/>
               <CustomTextInput name="password" type="password" label="Contraseña"/>
-              {submitError && (
-                <Grid item style={{ marginTop: 18 }} container justify="center" xs={12}>
-                  <Typography color="error" variant="h6">{submitError}</Typography>
-                </Grid>
-              )}
-              <Grid item style={{ marginTop: 18 }} container justify="center" xs={12}>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  variant="contained"
-                  color="primary"
-                > Iniciar sesión </Button>
-              </Grid>
+              <FormFooter isSubmitting={isSubmitting} submitError={submitError} submitButtonText='Iniciar sesión' />
             </Grid>
           </Form>
         )}

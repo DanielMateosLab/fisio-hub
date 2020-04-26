@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Formik, Form } from 'formik'
 import Grid from '@material-ui/core/Grid'
-import CustomTextInput from './CustomTextInput'
+import CustomTextInput from './customTextInput'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import { registerValidationSchema, ValidationErrorBody } from '../utils/validation'
+import { registerValidationSchema } from '../utils/validation'
 import handleSubmit from '../utils/handleSubmit'
 
 
@@ -37,6 +37,7 @@ const Register = () => {
               label="Repite la contraseña"
               type="password"
             />
+            { /* TODO: Abstract form footer from here and login */ }
             { submitError && (
               <Grid item style={{ marginTop: 18 }} container justify="center" xs={12}>
                 <Typography color="error" variant="h6">{submitError}</Typography>
