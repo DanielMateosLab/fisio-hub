@@ -13,7 +13,10 @@ export default async <T>(
       body: JSON.stringify(values)
     })
     if (res.status == 400) {
-      const { errors }: ValidationErrorBody = await res.json()
+      const { errors, message }: ValidationErrorBody = await res.json()
+      if (!errors || (errors.length < 1) ) {
+        return setSubmitError(message)
+      }
       for (const fieldError of errors) {
         const { field, message } = fieldError
         setFieldError(field, message)
