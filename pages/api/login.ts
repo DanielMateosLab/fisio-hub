@@ -1,7 +1,7 @@
 import database from "../../storage/database"
 import { CustomApiHandler } from "../../utils/types"
-import ProffesionalsDAO from "../../storage/proffesionalsDAO"
-import { loginValidationSchema, ValidationErrorBody } from '../../utils/validation'
+import ProffesionalsDAO from "../../storage/professionalsDAO"
+import { FieldValidationError, loginValidationSchema } from '../../utils/validation'
 
 const handler: CustomApiHandler = async (req, res) => {
   const { method } = req
@@ -24,8 +24,8 @@ const postHandler: CustomApiHandler = async (req, res) => {
     res.status(400).json({ message: 'mock error'})
   } catch (e) {
     if (e.name == 'ValidationError') {
-      const error = new ValidationErrorBody(e)
-      res.status(400).json(error)
+      const body = FieldValidationError.parseYupValidationErrors(e)
+      res.status(400).json(body)
     }
     res.status(500).json({ message: e.message })
   }

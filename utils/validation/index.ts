@@ -1,6 +1,4 @@
 import * as Yup from 'yup'
-import { FieldValidationErrorJSONObject } from './types'
-import { FormikHelpers } from 'formik'
 
 export const registerValidationSchema = Yup.object({
   firstName: Yup.string()
@@ -14,7 +12,7 @@ export const registerValidationSchema = Yup.object({
     .required('Campo obligatorio'),
   password: Yup.string()
     .min(5, 'La contraseña debe tener 5 o más caracteres')
-    .max(100, 'La contraseña debe tener 100 o menos caracteres')
+    .max(55, 'La contraseña debe tener 55 o menos caracteres')
     .required('Campo obligatorio'),
   repeatPassword: Yup.string()
     .required('Campo obligatorio')
@@ -29,20 +27,42 @@ export const loginValidationSchema = Yup.object({
     .email('La dirección de correo electrónico no es válida')
     .required('Campo obligatorio'),
   password: Yup.string()
-    .max(100, 'La contraseña debe tener 100 o menos caracteres')
     .required('Campo obligatorio'),
 })
 
-export class ValidationErrorBody {
-  message = "Validation Error"
-  errors: FieldValidationErrorJSONObject[] = []
+interface FieldError {
+  field: string
+  message: string
+}
 
-  constructor(error: Yup.ValidationError) {
-    for (const fieldError of error.inner) {
-      this.errors.push({
-        field: fieldError.path,
-        message: fieldError.message
-      })
+/** An error instance ready to be sent to the client as body response
+ * @param{errors} - Array of errors. Can be null to pass a single error
+ * with field and message params.
+ * */
+export class FieldValidationError {
+  name = 'ValidationError'
+  message = 'Validation Error'
+  errors: FieldError[] = []
+
+  constructor(errors: FieldError[] | null, field?: string, message?: string) {
+    if (errors) {
+      this.errors.push(...errors)
     }
+    if (field && message) {
+      this.errors.push({field, message})
+    }
+  }
+
+  /** - Takes a Yup ValidationError and returns a FieldValidationError instance
+   * ready to be sent to the client.
+   * - If the error is not a Yup.ValidationError instance it is returned with no changes  */
+  static parseYupValidationErrors(error: Yup.ValidationError) {
+    // Yup validation errors have an inner property used here to distinguish them from other errors.
+    if (!error.inner) {
+      return error
+    }
+    // Note how property path is renamed to field
+    const errors = error.inner.map(({path, message}) => ({field: path, message}))
+    return new FieldValidationError(errors)
   }
 }

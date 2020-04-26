@@ -1,7 +1,7 @@
 import database from "../../storage/database";
 import { CustomApiHandler } from "../../utils/types";
-import ProffesionalsDAO from "../../storage/proffesionalsDAO";
-import { registerValidationSchema, ValidationErrorBody } from '../../utils/validation'
+import ProfessionalsDAO from "../../storage/professionalsDAO";
+import { FieldValidationError, registerValidationSchema } from '../../utils/validation'
 
 const handler: CustomApiHandler = async (req, res) => {
   const { method } = req
@@ -20,12 +20,14 @@ const postHandler: CustomApiHandler = async (req, res) => {
 
     await registerValidationSchema.validate(formValues, { abortEarly: false })
 
-    ProffesionalsDAO.injectDB(req.db)
-    res.status(400).json({ message: 'mock error'})
+    ProfessionalsDAO.injectDB(req.db)
+    const _id = await ProfessionalsDAO.addProfessional(formValues)
+
+    res.json({ _id })
   } catch (e) {
     if (e.name == 'ValidationError') {
-      const error = new ValidationErrorBody(e)
-      res.status(400).json(error)
+      const body = FieldValidationError.parseYupValidationErrors(e)
+      res.status(400).json(body)
     }
     res.status(500).json({ message: e.message })
   }

@@ -1,5 +1,6 @@
-import { ValidationErrorBody } from './validation'
 import { FormikHelpers } from 'formik'
+import { FieldValidationError } from './validation'
+
 
 export default async <T>(
   values: T,
@@ -10,23 +11,22 @@ export default async <T>(
   try {
     const res = await fetch(path, {
       method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
       body: JSON.stringify(values)
     })
-    if (res.status == 400) {
-      const { errors, message }: ValidationErrorBody = await res.json()
-      if (!errors || (errors.length < 1) ) {
-        return setSubmitError(message)
+    const body = await res.json()
+
+    if(!res.ok) {
+      const { errors, message } = body as FieldValidationError
+      if (message == 'Validation Error' && errors && errors.length) {
+        return errors.map(({ field, message }) => setFieldError(field, message))
       }
-      for (const fieldError of errors) {
-        const { field, message } = fieldError
-        setFieldError(field, message)
-      }
-      return
+      return setSubmitError(message)
     }
-    if (!res.ok) {
-      const { message } = await res.json()
-      setSubmitError(message)
-    }
+
+    console.log(body)
   } catch (e) {
     setSubmitError(e.message)
   } finally {
