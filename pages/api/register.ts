@@ -1,7 +1,8 @@
-import database from "../../storage/database";
 import { CustomApiHandler } from "../../utils/types";
 import ProfessionalsDAO from "../../storage/professionalsDAO";
 import { FieldValidationError, registerValidationSchema } from '../../utils/validation'
+import database from '../../middlewares/database'
+
 
 const handler: CustomApiHandler = async (req, res) => {
   const { method } = req
@@ -16,10 +17,11 @@ const handler: CustomApiHandler = async (req, res) => {
 
 const postHandler: CustomApiHandler = async (req, res) => {
   try {
+    await database(req, res, ProfessionalsDAO)
+
     const formValues = req.body
     await registerValidationSchema.validate(formValues, { abortEarly: false })
 
-    ProfessionalsDAO.injectDB(req.db)
     const _id = await ProfessionalsDAO.addProfessional(formValues)
 
     res.json({ _id })
@@ -32,4 +34,4 @@ const postHandler: CustomApiHandler = async (req, res) => {
   }
 }
 
-export default database(handler)
+export default handler
