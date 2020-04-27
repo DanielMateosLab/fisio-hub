@@ -17,7 +17,6 @@ const handler: CustomApiHandler = async (req, res) => {
 const postHandler: CustomApiHandler = async (req, res) => {
   try {
     const formValues = req.body
-
     await registerValidationSchema.validate(formValues, { abortEarly: false })
 
     ProfessionalsDAO.injectDB(req.db)
