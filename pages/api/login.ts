@@ -16,12 +16,13 @@ const handler: CustomApiHandler = async (req, res) => {
 
 const postHandler: CustomApiHandler = async (req, res) => {
   try {
-    const formValues = req.body
+    let formValues = req.body
     await loginValidationSchema.validate(formValues, {abortEarly: false})
 
-
     ProffesionalsDAO.injectDB(req.db)
-    res.status(400).json({ message: 'mock error'})
+    const _id = await ProffesionalsDAO.loginProfessional(formValues)
+
+    res.json({ _id })
   } catch (e) {
     if (e.name == 'ValidationError') {
       const body = FieldValidationError.parseYupValidationErrors(e)
