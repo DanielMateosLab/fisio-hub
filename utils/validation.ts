@@ -1,4 +1,5 @@
 import * as Yup from 'yup'
+import { FieldValidationError } from './errors'
 
 export const registerValidationSchema = Yup.object({
   firstName: Yup.string()
@@ -30,39 +31,15 @@ export const loginValidationSchema = Yup.object({
     .required('Campo obligatorio'),
 })
 
-interface FieldError {
-  field: string
-  message: string
-}
-
-/** An error instance ready to be sent to the client as body response
- * @param{errors} - Array of errors. Can be null to pass a single error
- * with field and message params.
- * */
-export class FieldValidationError {
-  name = 'ValidationError'
-  message = 'Validation Error'
-  errors: FieldError[] = []
-
-  constructor(errors: FieldError[] | null, field?: string, message?: string) {
-    if (errors) {
-      this.errors.push(...errors)
-    }
-    if (field && message) {
-      this.errors.push({field, message})
-    }
+/** - Takes a Yup ValidationError and returns a FieldValidationError instance
+ * ready to be sent to the client.
+ * - If the error is not a Yup.ValidationError instance it is returned with no changes  */
+export function parseYupValidationErrors(error: Yup.ValidationError) {
+  // Yup validation errors have an inner property used here to distinguish them from other errors.
+  if (!error.inner) {
+    return error
   }
-
-  /** - Takes a Yup ValidationError and returns a FieldValidationError instance
-   * ready to be sent to the client.
-   * - If the error is not a Yup.ValidationError instance it is returned with no changes  */
-  static parseYupValidationErrors(error: Yup.ValidationError) {
-    // Yup validation errors have an inner property used here to distinguish them from other errors.
-    if (!error.inner) {
-      return error
-    }
-    // Note how property path is renamed to field
-    const errors = error.inner.map(({path, message}) => ({field: path, message}))
-    return new FieldValidationError(errors)
-  }
+  // Note how property path is renamed to field
+  const errors = error.inner.map(({path, message}) => ({field: path, message}))
+  return new FieldValidationError(errors)
 }

@@ -1,7 +1,6 @@
 import { Db, Collection } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import { FieldValidationError } from '../utils/validation'
-import { LoginError } from '../utils/errors'
+import { FieldValidationError, LoginError } from '../utils/errors'
 
 interface Professional {
   firstName: string

@@ -1,7 +1,7 @@
 import { CustomApiHandler } from "../../utils/types";
 import ProfessionalsDAO from "../../storage/professionalsDAO";
-import { FieldValidationError, registerValidationSchema } from '../../utils/validation'
-import database from '../../middlewares/database'
+import { registerValidationSchema } from '../../utils/validation'
+import { handleErrors, database } from '../../middlewares'
 
 
 const handler: CustomApiHandler = async (req, res) => {
@@ -26,11 +26,7 @@ const postHandler: CustomApiHandler = async (req, res) => {
 
     res.json({ _id })
   } catch (e) {
-    if (e.name == 'ValidationError') {
-      const body = FieldValidationError.parseYupValidationErrors(e)
-      res.status(400).json(body)
-    }
-    res.status(500).json({ message: e.message })
+    handleErrors(e, res)
   }
 }
 

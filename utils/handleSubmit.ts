@@ -1,5 +1,5 @@
 import { FormikHelpers } from 'formik'
-import { FieldValidationError } from './validation'
+import { FieldValidationError } from './errors'
 
 
 export default async <T>(
@@ -28,7 +28,8 @@ export default async <T>(
 
     console.log(body)
   } catch (e) {
-    setSubmitError(e.message)
+    // Este punto es alcanzado solo cuando hay un error 500 que no se maneja.
+    setSubmitError('Error en el servidor, prueba de nuevo más tarde.')
   } finally {
     setSubmitting(false)
   }
