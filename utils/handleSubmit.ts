@@ -21,7 +21,7 @@ export default async <T>(
     if(!res.ok) {
       const { errors, message } = body as FieldValidationError
       if (message == 'Validation Error' && errors && errors.length) {
-        return errors.map(({ field, message }) => setFieldError(field, message))
+        return errors.forEach(({ field, message }) => setFieldError(field, message))
       }
       return setSubmitError(message)
     }
