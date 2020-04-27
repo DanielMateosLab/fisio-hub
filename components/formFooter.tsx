@@ -13,7 +13,7 @@ const FormFooter = ({submitError, isSubmitting, submitButtonText}: FormFooterPro
   <>
     {submitError && (
       <Grid item style={{ marginTop: 18 }} container justify="center" xs={12}>
-        <Typography color="error" variant="h6">{submitError}</Typography>
+        <Typography color="error" align="center" variant="h6">{submitError}</Typography>
       </Grid>
     )}
     <Grid item style={{ marginTop: 18 }} container justify="center">
