@@ -2,6 +2,7 @@ import { Db } from 'mongodb'
 import { Professional } from './storage/professionalsDAO'
 import { MongoClient } from 'mongodb'
 import { User } from 'passport'
+import { ResponseBody } from './utils/types'
 
 declare module 'http' {
   interface IncomingMessage {
@@ -18,6 +19,8 @@ declare module 'http' {
     isAuthenticated(): boolean
     isUnauthenticated(): boolean
   }
-}
 
-// TODO: Type the shape of the NextResponse objects
+  interface ServerResponse {
+    json: (body: ResponseBody) => void
+  }
+}
