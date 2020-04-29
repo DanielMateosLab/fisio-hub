@@ -22,8 +22,8 @@ export default async function database(
 
     return next()
   } catch (err) {
-    res.status(503).send({
-      message: 'Unable to connect to the database. ' + err.message
+    return res.status(503).send({
+      message: 'No se ha podido acceder a la base de datos. ' + err.message
     })
   }
 }

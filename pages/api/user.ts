@@ -1,8 +1,9 @@
 import nextConnect from 'next-connect'
 import middleware from '../../middlewares/middleware'
 import extractUser from '../../utils/extractUser'
+import onError from '../../middlewares/onError'
 
-const handler = nextConnect()
+const handler = nextConnect({ onError })
 
 handler.use(middleware)
 
