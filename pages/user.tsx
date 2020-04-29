@@ -15,6 +15,11 @@ export default () => {
   if (!user) return null
 
   return (
-    <Typography variant="button">{ user.firstName }</Typography>
+    <>
+      <Typography variant="h4" gutterBottom>{ user.firstName } { user.lastName }</Typography>
+      <Typography variant="body1">
+        Dirección de correo electrónico: { user.email }
+      </Typography>
+    </>
   )
 }

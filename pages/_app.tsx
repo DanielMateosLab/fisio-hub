@@ -3,6 +3,8 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import theme from '../utils/theme'
 import Navbar from '../components/navbar'
+import Container from '@material-ui/core/Container'
+
 
 // import App from 'next/app'
 
@@ -12,8 +14,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <Navbar />
-        <Component {...pageProps}>
-        </Component>
+        <Container style={{paddingTop: "24px"}}>
+          <Component {...pageProps} />
+        </Container>
       </ThemeProvider>
     </>
   )
