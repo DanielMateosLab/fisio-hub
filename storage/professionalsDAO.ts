@@ -1,8 +1,9 @@
-import { Db, Collection } from 'mongodb'
+import { Db, Collection, ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import { FieldValidationError, LoginError } from '../utils/errors'
 
-interface Professional {
+export interface Professional {
+  _id?: ObjectId
   firstName: string
   lastName: string
   email: string
@@ -29,18 +30,11 @@ export default class ProfessionalsDAO {
 
     const hashedPassword = await bcrypt.hash(professional.password, 12)
 
-    const { insertedId } = await professionals
-      .insertOne({ ...professional, password: hashedPassword })
-    return insertedId
-  }
+    const result = await professionals.insertOne({
+      ...professional,
+      password: hashedPassword
+    })
 
-  static async loginProfessional({ email, password }: Pick<Professional, 'email' | 'password'>) {
-    const professional = await professionals.findOne({email})
-    if (!professional) throw new LoginError()
-
-    const isValidPassword = await bcrypt.compare(password, professional.password)
-    if(!isValidPassword) throw new LoginError()
-
-    return professional._id
+    return result.ops[0]
   }
 }

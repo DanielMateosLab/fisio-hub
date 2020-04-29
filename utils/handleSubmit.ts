@@ -1,13 +1,16 @@
 import { FormikHelpers } from 'formik'
 import { FieldValidationError } from './errors'
+import { HandleResult } from './types'
 
 
 export default async <T>(
   values: T,
   { setSubmitting, setFieldError }: FormikHelpers<T>,
+  setSubmitError: Function,
   path: string,
-  setSubmitError: Function
+  handleResult: HandleResult
 ) => {
+  setSubmitError('')
   try {
     const res = await fetch(path, {
       method: 'post',
@@ -16,20 +19,31 @@ export default async <T>(
       },
       body: JSON.stringify(values)
     })
-    const body = await res.json()
 
-    if(!res.ok) {
-      const { errors, message } = body as FieldValidationError
-      if (message == 'Validation Error' && errors && errors.length) {
-        return errors.forEach(({ field, message }) => setFieldError(field, message))
-      }
-      return setSubmitError(message)
-    }
-
-    console.log(body)
+    res.json()
+      .then(body => {
+        if (!res.ok) {
+          const { errors, message } = body as FieldValidationError
+          if (message == 'Validation Error' && errors && errors.length) {
+            return errors.forEach(({ field, message }) => setFieldError(field, message))
+          }
+          return setSubmitError(message)
+        }
+        handleResult(body)
+      })
+      .catch(() => {
+        res.text()
+          .then(error => setSubmitError(error))
+          .catch(() => {
+            return setSubmitError(`
+            Ha ocurrido un error. 
+            Vuelve a intentarlo más tarde.
+            Si el error persiste contacta con los administradores y facilítales esta información: 
+            ${res.status} ${res.statusText}`)
+          })
+      })
   } catch (e) {
-    // Este punto es alcanzado solo cuando hay un error 500 que no se maneja.
-    setSubmitError('Error en el servidor, prueba de nuevo más tarde.')
+    setSubmitError('Error conectando al servidor. Comprueba tu conexión y vuelve a intentarlo.')
   } finally {
     setSubmitting(false)
   }

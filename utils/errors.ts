@@ -1,14 +1,12 @@
-export class LoginError extends Error {
-  status = 400
-  constructor(message = 'Contraseña o dirección de correo electrónico incorrecta') {
-    super(message)
+export class LoginError {
+  status = 401
+  message = 'Contraseña o dirección de correo electrónico incorrecta'
 
-    this.message = message
-  }
+  constructor() {}
 }
 
 
-interface FieldError {
+export interface FieldError {
   field: string
   message: string
 }

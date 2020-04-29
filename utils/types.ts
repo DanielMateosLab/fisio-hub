@@ -1,11 +1,18 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { Db } from "mongodb";
+import { NextApiRequest, NextApiResponse } from 'next'
+import { Professional } from '../storage/professionalsDAO'
+import { FieldError } from './errors'
 
-export interface CustomApiRequest extends NextApiRequest {
-  db: Db
+type NextHandler = (err?: any) => void
+export interface Middleware {
+  (req: NextApiRequest, res: NextApiResponse, next: NextHandler): void
 }
 
-export type CustomApiHandler<T = any> = (
-  req: CustomApiRequest,
-  res: NextApiResponse<T>
-) => void 
+export interface ResponseBody {
+  professional?: Omit<Professional, 'password'>
+  message?: String
+  errors?: FieldError[]
+}
+
+export interface HandleResult {
+  (resBody: ResponseBody): void
+}
