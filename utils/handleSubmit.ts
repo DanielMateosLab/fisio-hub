@@ -1,15 +1,19 @@
 import { FormikHelpers } from 'formik'
 import { FieldValidationError } from './errors'
+import { HandleResult } from './types'
 
 
 export default async <T>(
   values: T,
   { setSubmitting, setFieldError }: FormikHelpers<T>,
+  setSubmitError: Function,
   path: string,
-  setSubmitError: Function
+  handleResult: HandleResult
 ) => {
+  let res
   try {
-    const res = await fetch(path, {
+    setSubmitError('')
+    res = await fetch(path, {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
@@ -26,8 +30,11 @@ export default async <T>(
       return setSubmitError(message)
     }
 
-    console.log(body)
+    handleResult(body)
   } catch (e) {
+    if (res && res.status == 401) {
+      return setSubmitError('Contraseña o dirección de correo electrónico incorrecta')
+    }
     // Este punto es alcanzado solo cuando hay un error 500 que no se maneja.
     setSubmitError('Error en el servidor, prueba de nuevo más tarde.')
   } finally {
