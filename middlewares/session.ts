@@ -11,7 +11,7 @@ export default function(req: NextApiRequest, res: NextApiResponse, next: Functio
     client: req.dbClient,
     stringify: false
   })
-  // TODO: maybe pass code and decode functions.
+  // TODO: use code and decode functions with a secret for security.
   return session({
     store: promisifyStore(mongoStore)
   })(req, res, next)
