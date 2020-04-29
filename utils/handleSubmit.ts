@@ -10,33 +10,40 @@ export default async <T>(
   path: string,
   handleResult: HandleResult
 ) => {
-  let res
+  setSubmitError('')
   try {
-    setSubmitError('')
-    res = await fetch(path, {
+    const res = await fetch(path, {
       method: 'post',
       headers: {
         'Content-type': 'application/json'
       },
       body: JSON.stringify(values)
     })
-    const body = await res.json()
 
-    if(!res.ok) {
-      const { errors, message } = body as FieldValidationError
-      if (message == 'Validation Error' && errors && errors.length) {
-        return errors.forEach(({ field, message }) => setFieldError(field, message))
-      }
-      return setSubmitError(message)
-    }
-
-    handleResult(body)
+    res.json()
+      .then(body => {
+        if (!res.ok) {
+          const { errors, message } = body as FieldValidationError
+          if (message == 'Validation Error' && errors && errors.length) {
+            return errors.forEach(({ field, message }) => setFieldError(field, message))
+          }
+          return setSubmitError(message)
+        }
+        handleResult(body)
+      })
+      .catch(() => {
+        res.text()
+          .then(error => setSubmitError(error))
+          .catch(() => {
+            return setSubmitError(`
+            Ha ocurrido un error. 
+            Vuelve a intentarlo más tarde.
+            Si el error persiste contacta con los administradores y facilítales esta información: 
+            ${res.status} ${res.statusText}`)
+          })
+      })
   } catch (e) {
-    if (res && res.status == 401) {
-      return setSubmitError('Contraseña o dirección de correo electrónico incorrecta')
-    }
-    // Este punto es alcanzado solo cuando hay un error 500 que no se maneja.
-    setSubmitError('Error en el servidor, prueba de nuevo más tarde.')
+    setSubmitError('Error conectando al servidor. Comprueba tu conexión y vuelve a intentarlo.')
   } finally {
     setSubmitting(false)
   }

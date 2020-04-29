@@ -1,33 +1,29 @@
-import { Db, MongoClient } from 'mongodb'
-import { CustomApiRequest } from '../utils/types'
-import { NextApiResponse } from 'next'
+import { MongoClient } from 'mongodb'
+import { NextApiRequest, NextApiResponse } from 'next'
+
 
 const client = new MongoClient(process.env.DB_URI!, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 
-interface DAO {
-  injectDB: (db: Db) => void
-}
-
-const database = async (
-  req: CustomApiRequest,
+export default async function database(
+  req: NextApiRequest,
   res: NextApiResponse,
-  ...DAOs: DAO[]
-) => {
+  next: Function
+) {
   try {
     if (!client.isConnected()) {
       await client.connect()
     }
 
-    const db = client.db(process.env.DB_NAME)
-    DAOs.forEach(DAO => { DAO.injectDB(db) })
+    req.dbClient = client
+    req.db = client.db(process.env.DB_NAME)
+
+    return next()
   } catch (err) {
     res.status(503).send({
       message: 'Unable to connect to the database. ' + err.message
     })
   }
 }
-
-export default database

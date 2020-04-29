@@ -1,34 +1,22 @@
-import { CustomApiHandler } from "../../utils/types"
-import ProffesionalsDAO from "../../storage/professionalsDAO"
-import { loginValidationSchema } from '../../utils/validation'
-import { runMiddlewares, database, handleErrors } from '../../middlewares'
-import ProfessionalsDAO from '../../storage/professionalsDAO'
+import nextConnect from 'next-connect'
+import middleware from '../../middlewares/middleware'
+import { professionals } from '../../middlewares/collections'
+import passport from 'utils/passport'
+import extractUser from '../../utils/extractUser'
+import onError from '../../middlewares/onError'
 
+const handler = nextConnect({ onError })
 
-const handler: CustomApiHandler = async (req, res) => {
-  const { method } = req
+handler.use(middleware)
+handler.use(professionals)
 
-  if (method == 'POST') {
-    await postHandler(req, res)
-  }
-
-  res.setHeader('Allow', ['POST'])
-  res.status(405).json({ message: 'Method not allowed' })
-}
-
-const postHandler: CustomApiHandler = async (req, res) => {
-  try {
-    await runMiddlewares(req, res, () => database(req, res, ProfessionalsDAO))
-
-    let formValues = req.body
-    await loginValidationSchema.validate(formValues, {abortEarly: false})
-
-    const _id = await ProffesionalsDAO.loginProfessional(formValues)
-
-    res.json({ _id })
-  } catch (e) {
-    handleErrors(e, res)
-  }
-}
+handler
+  .post(passport.authenticate('local'), (req, res) => {
+    res.json({ professional: extractUser(req) })
+  })
+  .delete((req, res) => {
+    req.logOut()
+    res.status(204).end()
+  })
 
 export default handler
