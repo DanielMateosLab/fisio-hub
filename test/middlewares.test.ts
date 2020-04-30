@@ -1,8 +1,11 @@
 // @ts-nocheck
 import database from '../middlewares/database'
 import { MongoClient } from 'mongodb'
+import { professionals } from '../middlewares/collections'
+import ProfessionalsDAO from '../storage/professionalsDAO'
 
 jest.mock('mongodb')
+jest.mock('../storage/professionalsDAO')
 
 describe('database', function () {
   it('should add the client and db to the req and call next', async () => {
@@ -33,5 +36,21 @@ describe('database', function () {
     } catch (e) {
       expect(e.message).toContain(errorMessage)
     }
+  })
+})
+
+describe('collections', () => {
+  test('Professionals: should call ProfessionalsDAO.injectDB() and next()', () => {
+    const req = {
+      db: 'mock'
+    }
+    const next = jest.fn()
+    const mockInjectDB = jest.fn()
+
+    ProfessionalsDAO.injectDB.mockImplementationOnce(mockInjectDB)
+    professionals(req, {}, next)
+
+    expect(next).toHaveBeenCalled()
+    expect(mockInjectDB).toHaveBeenCalled()
   })
 })
