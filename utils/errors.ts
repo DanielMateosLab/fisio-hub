@@ -1,3 +1,4 @@
+
 export class LoginError {
   status = 401
   message = 'Contraseña o dirección de correo electrónico incorrecta'
@@ -5,6 +6,16 @@ export class LoginError {
   constructor() {}
 }
 
+export class ServiceUnavailableError {
+  status = 503
+  message = 'El servidor no puede resolver la solicitud en este momento'
+
+  constructor(message?: string) {
+    if (message) {
+      this.message = message
+    }
+  }
+}
 
 export interface FieldError {
   field: string
