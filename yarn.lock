@@ -1313,6 +1313,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/cookie-signature@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/cookie-signature/-/cookie-signature-1.0.3.tgz#4761a0c31ad159306564a6b41a3f8b014c47eab2"
+  integrity sha512-0jpd4oizLaBybWBCew/lx4iAjjNWmCfzbspvnjoppyGEquN51BjShmPCksiH2IXLwtxQ2F/e2PkFy0LL7jpLsw==
+
 "@types/express-serve-static-core@*":
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.5.tgz#a00ac7dadd746ae82477443e4d480a6a93ea083c"
@@ -2552,6 +2557,11 @@ convert-source-map@^0.3.3:
   version "0.3.5"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-0.3.5.tgz#f1d802950af7dd2631a1febe0596550c86ab3190"
   integrity sha1-8dgClQr33SYxof6+BZZVDIarMZA=
+
+cookie-signature@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.1.0.tgz#cc94974f91fb9a9c1bb485e95fc2b7f4b120aff2"
+  integrity sha512-Alvs19Vgq07eunykd3Xy2jF0/qSNv2u7KDbAek9H5liV1UMijbqFs5cycZvv5dVsvseT/U4H8/7/w8Koh35C4A==
 
 cookie@^0.4.0:
   version "0.4.1"
