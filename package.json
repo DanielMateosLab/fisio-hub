@@ -30,6 +30,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-signature": "^1.0.3",
+    "@types/jest": "^25.2.1",
     "@types/mongodb": "^3.5.8",
     "@types/node": "^13.13.1",
     "@types/passport": "^1.0.3",

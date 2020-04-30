@@ -20,7 +20,8 @@
     "baseUrl": "."
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "test"
   ],
   "include": [
     "next-env.d.ts",
