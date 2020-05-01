@@ -1,16 +1,11 @@
-require('dotenv').config()
+import { mockProfessional } from './testUtils'
 import ProfessionalsDAO from '../storage/professionalsDAO'
 import { Collection, MongoClient } from 'mongodb'
+require('dotenv').config()
 
 describe('professionalsDAO', () => {
   let client: MongoClient
   let professionals: Collection
-  const mockProfessional = {
-    email: 'a@a.com',
-    firstName: 'aaaa',
-    lastName: 'bbbb cccc',
-    password: 'aaaaa'
-  }
 
   beforeAll(async () => {
     const dbName = 'test'
