@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useUser } from '../utils/hooks'
 import Router from 'next/router'
 
-export default () => {
+const Index = () => {
   const { user } = useUser()
 
   useEffect(() => {
@@ -12,3 +12,5 @@ export default () => {
 
   return null
 }
+
+export default Index
