@@ -3,6 +3,7 @@ import database from '../middlewares/database'
 import { MongoClient } from 'mongodb'
 import { professionals } from '../middlewares/collections'
 import ProfessionalsDAO from '../storage/professionalsDAO'
+import onError, { defaultErrorMessage } from '../middlewares/onError'
 
 jest.mock('mongodb')
 jest.mock('../storage/professionalsDAO')
@@ -52,5 +53,40 @@ describe('collections', () => {
 
     expect(next).toHaveBeenCalled()
     expect(mockInjectDB).toHaveBeenCalled()
+  })
+})
+
+describe('onError', () => {
+  const res = {
+    json: jest.fn(),
+    status: jest.fn(function() { return this })
+  }
+  let error: Error
+
+  beforeEach(() => {
+    error = new Error('mock Error')
+  })
+
+  it('should call res.status(500) when error has no status property', () => {
+    onError(error, {}, res)
+
+    expect(res.status).toHaveBeenCalledWith(500)
+  })
+  it('should call res.json with the default message if no message is provided in the error', () => {
+    delete error.message
+
+    onError(error, {}, res)
+
+    expect(res.json).toHaveBeenCalledWith({ message: defaultErrorMessage })
+  })
+  it('should call res.json with the error status and message', () => {
+    error.status = 400
+
+    onError(error, {}, res)
+
+    expect(res.status).toHaveBeenCalledWith(error.status)
+    expect(res.json).toHaveBeenCalledWith({
+      message: error.message
+    })
   })
 })

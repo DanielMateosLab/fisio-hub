@@ -1,15 +1,18 @@
 import { parseYupValidationErrors } from '../utils/validation'
 import { NextApiRequest, NextApiResponse } from 'next'
 
+// Exported for testing purposes
+export const defaultErrorMessage = 'Ha ocurrido un error desconocido en el servidor.'
+
 export default (e: any, req: NextApiRequest, res: NextApiResponse) => {
   if (e.name == 'ValidationError') {
     e = parseYupValidationErrors(e)
   }
 
-  const { status, message, errors } = e
-  if (status) {
-    return res.status(status).json({ message, errors })
+  let { status = 500, message, errors } = e
+  if (!message) {
+    message = defaultErrorMessage
   }
 
-  res.status(500).json({ message })
+  res.status(status).json({ message, errors })
 }
