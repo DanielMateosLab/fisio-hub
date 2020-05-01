@@ -47,7 +47,7 @@ const Register = () => {
           type="password"
         />
       </CustomForm>
-      <SwitchAuthFooter auxiliaryText="'¿Ya estás registrado? '" linkText="Inicia sesión" href="/login" />
+      <SwitchAuthFooter auxiliaryText="¿Ya estás registrado? " linkText="Inicia sesión" href="/login" />
     </Container>
   )
 }
