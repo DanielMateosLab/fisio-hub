@@ -14,7 +14,6 @@
     "@material-ui/icons": "^4.9.1",
     "bcryptjs": "^2.4.3",
     "connect-mongo": "^3.2.0",
-    "cookie-signature": "^1.1.0",
     "formik": "^2.1.4",
     "mongodb": "^3.5.6",
     "next": "9.3.5",
@@ -29,7 +28,6 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
-    "@types/cookie-signature": "^1.0.3",
     "@types/jest": "^25.2.1",
     "@types/mongodb": "^3.5.8",
     "@types/node": "^13.13.1",

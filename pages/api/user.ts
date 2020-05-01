@@ -7,7 +7,7 @@ const handler = nextConnect({ onError })
 
 handler.use(middleware)
 
-handler.get(async (req,res) => {
+handler.get((req,res) => {
   res.json({ professional: extractUser(req) })
 })
 
