@@ -4,13 +4,16 @@ import { MongoClient } from 'mongodb'
 import { professionals } from '../middlewares/collections'
 import ProfessionalsDAO from '../storage/professionalsDAO'
 import onError, { defaultErrorMessage } from '../middlewares/onError'
+import { parseYupValidationErrors } from '../utils/validation'
 
 jest.mock('mongodb')
 jest.mock('../storage/professionalsDAO')
+jest.mock('../utils/validation')
 
 describe('database', function () {
+  const next = jest.fn()
+
   it('should add the client and db to the req and call next', async () => {
-    const next = jest.fn()
     const connect = jest.fn()
 
     MongoClient.prototype.connect.mockImplementationOnce(connect)
@@ -24,6 +27,15 @@ describe('database', function () {
     expect(req).toHaveProperty('dbClient')
     expect(req).toHaveProperty('db')
   })
+  it('should not call client.connect if it is already connected', () => {
+    const connectSpy = jest.spyOn(MongoClient, 'connect')
+    MongoClient.prototype.isConnected.mockImplementationOnce(() => true)
+
+    database({}, {}, next)
+
+    expect(connectSpy).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalled()
+  })
   it('should throw a Service Unavailable error when and error happends', async () => {
     const errorMessage = 'mock error'
     try {
@@ -31,7 +43,7 @@ describe('database', function () {
         throw new Error(errorMessage)
       })
 
-      const result = await database({}, {}, () => true)
+      const result = await database({}, {}, next)
 
       expect(result).toBeUndefined()
     } catch (e) {
@@ -88,5 +100,15 @@ describe('onError', () => {
     expect(res.json).toHaveBeenCalledWith({
       message: error.message
     })
+  })
+  it('should parse yup validation errors', () => {
+    // Yup validation errors have ValidationError as name
+    error.name = 'ValidationError'
+    const mockParseFn = jest.fn((e) => e)
+    parseYupValidationErrors.mockImplementationOnce(mockParseFn)
+
+    onError(error, {}, res)
+
+    expect(mockParseFn).toHaveBeenCalled()
   })
 })

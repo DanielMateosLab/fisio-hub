@@ -3,12 +3,12 @@ import Typography from '@material-ui/core/Typography'
 import { useEffect } from 'react'
 import Router from 'next/router'
 
-export default () => {
+const User = () => {
   const { user } = useUser()
 
   useEffect(() => {
     if (!user) {
-      Router.push('/')
+      Router.push('/login')
     }
   }, [user])
 
@@ -23,3 +23,5 @@ export default () => {
     </>
   )
 }
+
+export default User
