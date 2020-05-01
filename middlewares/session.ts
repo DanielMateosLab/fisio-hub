@@ -10,6 +10,7 @@ const secret = process.env.SESS_SECRET!
 export default function(req: NextApiRequest, res: NextApiResponse, next: Function) {
   const mongoStore = new MongoStore({
     client: req.dbClient,
+    dbName: process.env.DB_NAME,
     stringify: false
   })
   return session({
