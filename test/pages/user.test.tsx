@@ -41,7 +41,7 @@ describe('/user', () => {
   })
   it('return an empty div and redirect to /login', () => {
     useUser.mockImplementationOnce(() => ({
-      user: ''
+      user: null
     }))
 
     const routerSpy = jest.spyOn(Router, 'push')

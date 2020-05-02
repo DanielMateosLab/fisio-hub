@@ -1,16 +1,14 @@
+import React, { useEffect } from 'react'
 import { useUser } from '../utils/hooks'
 import Typography from '@material-ui/core/Typography'
-import { useEffect } from 'react'
-import Router from 'next/router'
+import protect from '../utils/protect'
 
 const User = () => {
   const { user } = useUser()
 
   useEffect(() => {
-    if (!user) {
-      Router.push('/login')
-    }
-  }, [user])
+    protect(user)
+  })
 
   if (!user) return null
 
