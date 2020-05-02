@@ -25,5 +25,4 @@ describe('/register', () => {
 
     expect(link).toHaveAttribute('href', '/login')
   })
-  it.todo('should redirect to /user whith a logged in user')
 })

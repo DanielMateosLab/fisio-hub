@@ -1,21 +1,15 @@
-import React, { useEffect } from "react"
+import React from "react"
 import CustomTextInput from 'components/customTextInput'
 import { loginValidationSchema } from 'utils/validation'
 import CustomForm from 'components/customForm'
-import { useUser } from 'utils/hooks'
-import Router from 'next/router'
+import { useGuestOnly, useUser } from 'utils/hooks'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import SwitchAuthFooter from 'components/switchAuthFooter'
 
 const Login = () => {
-  const { user, mutate } = useUser()
-
-  useEffect(() => {
-    if (user) {
-      Router.push('/user')
-    }
-  }, [user])
+  const { mutate } = useUser()
+  useGuestOnly()
 
   return (
     <Container maxWidth="xs">
