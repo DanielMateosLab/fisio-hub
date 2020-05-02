@@ -9,7 +9,7 @@ const store = new MongoStore({
   url: process.env.DB_URI!
 })
 const secret = process.env.SESS_SECRET!
-const maxAge = process.env.SESS_MAX_AGE ? +process.env.SESS_MAX_AGE : 60 * 60 * 24
+const maxAge = process.env.SESS_MAX_AGE ? +process.env.SESS_MAX_AGE : (1000 * 60 * 60 * 24)
 
 const handler = nextConnect({ onError })
 handler.use(session({
