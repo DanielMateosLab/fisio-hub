@@ -19,7 +19,7 @@ describe('/user', () => {
   })
 
   it('should show the user first name and last name', () => {
-    useUser.mockImplementationOnce(() => ({
+    useUser.mockImplementation(() => ({
       user: mockProfessional
     }))
 
@@ -30,7 +30,7 @@ describe('/user', () => {
     expect(getByText(new RegExp(lastName))).toBeInTheDocument()
   })
   it('should show the user email', () => {
-    useUser.mockImplementationOnce(() => ({
+    useUser.mockImplementation(() => ({
       user: mockProfessional
     }))
 
@@ -40,7 +40,7 @@ describe('/user', () => {
     expect(getByText(new RegExp(email))).toBeInTheDocument()
   })
   it('return an empty div and redirect to /login', () => {
-    useUser.mockImplementationOnce(() => ({
+    useUser.mockImplementation(() => ({
       user: null
     }))
 

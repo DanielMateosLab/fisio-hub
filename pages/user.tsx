@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useUser } from '../utils/hooks'
 import Typography from '@material-ui/core/Typography'
-import protect from '../utils/protect'
+import useEnsureAuthenticated from '../utils/useEnsureAuthenticated'
 
 const User = () => {
   const { user } = useUser()
-
-  useEffect(() => {
-    protect(user)
-  })
+  useEnsureAuthenticated()
 
   if (!user) return null
 
