@@ -32,15 +32,11 @@ export default async <T>(
         handleResult(body)
       })
       .catch(() => {
-        res.text()
-          .then(error => setSubmitError(error))
-          .catch(() => {
-            return setSubmitError(`
+        return setSubmitError(`
             Ha ocurrido un error. 
             Vuelve a intentarlo más tarde.
             Si el error persiste contacta con los administradores y facilítales esta información: 
             ${res.status} ${res.statusText}`)
-          })
       })
   } catch (e) {
     setSubmitError('Error conectando al servidor. Comprueba tu conexión y vuelve a intentarlo.')
