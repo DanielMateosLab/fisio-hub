@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { ServiceUnavailableError } from '../utils/errors'
+import { DbUnavailableError } from '../utils/errors'
 
 const client = new MongoClient(process.env.DB_URI!, {
   useNewUrlParser: true,
@@ -22,8 +22,6 @@ export default async function database(
 
     return next()
   } catch (err) {
-    const additionalInfo = err.message ? err.message : ''
-    const message = 'No se ha podido acceder a la base de datos. ' + additionalInfo
-    throw new ServiceUnavailableError(message)
+    throw new DbUnavailableError(err.message)
   }
 }

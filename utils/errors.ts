@@ -17,6 +17,14 @@ export class ServiceUnavailableError {
   }
 }
 
+export class DbUnavailableError extends ServiceUnavailableError {
+  constructor(message?: string) {
+    super(message)
+
+    this.message = 'No se ha podido acceder a la base de datos. ' + message
+  }
+}
+
 export interface FieldError {
   field: string
   message: string
