@@ -4,7 +4,6 @@ import { ObjectID } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import { Professional } from '../storage/professionalsDAO'
 import { NextApiRequest } from 'next'
-import { loginValidationSchema, parseYupValidationErrors } from './validation'
 import { LoginError } from './errors'
 
 

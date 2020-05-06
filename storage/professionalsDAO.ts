@@ -1,6 +1,6 @@
 import { Db, Collection, ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import { FieldValidationError, LoginError } from '../utils/errors'
+import { FieldValidationError } from '../utils/errors'
 
 export interface Professional {
   _id?: ObjectId
@@ -20,7 +20,7 @@ export default class ProfessionalsDAO {
     professionals = db.collection('professionals')
   }
 
-  static async addProfessional(professional: Professional) {
+  static async addProfessional(professional: Professional): Promise<Professional> {
     const { email } = professional
     const alreadyExists = await professionals.findOne({ email })
     if (alreadyExists) {
