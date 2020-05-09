@@ -3,9 +3,11 @@ import { FieldValidationError } from './errors'
 
 export const registerValidationSchema = Yup.object({
   firstName: Yup.string()
+    .min(3, 'El nombre debe tener 3 o más carácteres')
     .max(30, 'El nombre debe tener 30 o menos caracteres')
     .required('Campo obligatorio'),
   lastName: Yup.string()
+    .min(3, 'Los apellidos deben tener 3 o más carácteres')
     .max(30, 'Los apellidos deben tener 30 o menos caracteres')
     .required('Campo obligatorio'),
   email: Yup.string()
