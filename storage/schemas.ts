@@ -1,4 +1,5 @@
-import _ from 'lodash'
+require('dotenv').config()
+import { MongoClient } from 'mongodb'
 
 type BSONType =
   | 'number'
@@ -27,172 +28,276 @@ interface Properties {
   required?: Array<string>
 }
 
-interface BSONSchema<T = { [key: string]: Properties }> {
+interface BSONSchema {
   validator: {
     $jsonSchema: {
       bsonType: 'object'
       additionalProperties: false
-      properties: T
-      required: Array<keyof T>
+      properties: {
+        [key: string]: Properties
+      }
+      required: string[]
     }
   }
 }
 
-// TODO: delete MongoSchema class and just type the schemas
-class MongoSchema<T extends { [key: string]: Properties }> {
-  validator: any = {
-    $jsonSchema: {
-      bsonType: 'object',
-      additionalProperties: false
-    }
-  }
-
-  constructor(properties: T, optional: Array<keyof T> = []) {
-    this.validator.$jsonSchema.required = _.pull(Object.keys(properties), optional as any)
-    this.validator.$jsonSchema.properties = { _id: {}, ...properties }
-  }
+const _id: Properties = {
+  bsonType: 'objectId',
+  description: '"_id" must be a valid objectId reference',
+}
+const center_id: Properties = {
+  bsonType: 'objectId',
+    description: '"center_id" must be a valid objectId reference',
+}
+const name: Properties = {
+  bsonType: 'string',
+  description: '"name" must be a valid string',
+}
+const firstName: Properties = {
+  bsonType: 'string',
+    description: '"firstName" must be a valid string',
+}
+const lastName: Properties = {
+  bsonType: 'string',
+    description: '"lastName" must be a valid string',
+}
+const email: Properties = {
+  bsonType: 'string',
+    description: '"email" must be a valid string',
 }
 
-const centerBSON: BSONSchema = {
+const centerSchema: BSONSchema = {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
       additionalProperties: false,
       properties: {
-
-      }
+        _id: {},
+        name,
+      },
+      required: ['name']
     }
   }
 }
 
-
-const requiredString = (key: string): Properties => ({
-  bsonType: 'string',
-  description: `"${key}" is required and must be a string`
-})
-
-const reference = (key: string): Properties => ({
-  bsonType: 'objectId',
-  description: `"${key}" must be a valid objectId reference`
-})
-
-export const centerSchema = new MongoSchema({
-  name: requiredString('name')
-})
-
-export const userSchema = new MongoSchema(({
-  email: requiredString('email'),
-  password: requiredString('password'),
-  roles: {
-    bsonType: 'array',
-    items: {
-      bsonType: 'object' as any,
-      required: ['_id', 'centerName', 'role'],
+const userSchema: BSONSchema = {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
       additionalProperties: false,
-      description: '"role" must contain the stated properties',
       properties: {
-        _id: reference('_id'),
-        centerName: requiredString('centerName'),
-        role: {
-          enum: ['professional', 'patient'],
-          description: '"role" is required and must be one of the listed options. '
+        _id: {},
+        email: {
+          bsonType: 'string',
+          description: '"email" is required and must be a valid string',
+        },
+        password: {
+          bsonType: 'string',
+          description: '"password" is required and must be a valid string',
+        },
+        roles: {
+          bsonType: 'array',
+          minItems: 1,
+          description: 'At least one role is required',
+          items: {
+            bsonType: 'object',
+            required: ['_id', 'centerName', 'role'],
+            additionalProperties: false,
+            description: 'role in "roles" must contain the stated properties',
+            properties: {
+              _id,
+              centerName: {
+                bsonType: 'string',
+                description: '"centerName" is required and must be a valid string',
+              },
+              role: {
+                enum: ['professional', 'patient'],
+                description: '"role" is required and must be one of the listed options. '
+              }
+            }
+          }
         }
-      }
-    },
-    description: 'At least one role is required'
-  }
-}))
-
-export const professionalSchema = new MongoSchema(
-{
-  center: reference('center'),
-  firstName: requiredString('firstName'),
-  lastName: requiredString('lastName'),
-  email: requiredString('email'),
-})
-
-export const patientSchema = new MongoSchema({
-  center: reference('center'),
-  firstName: requiredString('firstName'),
-  lastName: requiredString('lastName'),
-  email: requiredString('email'),
-  mainProfessional: reference('mainProfessional')
-})
-
-export const appointmentSchema = new MongoSchema({
-  date: {
-    bsonType: 'date',
-    description: '"date" is required'
-  },
-  center: reference('center'),
-  professional: {
-    bsonType: 'object',
-    required: ['_id', 'firstName', 'lastName'],
-    additionalProperties: false,
-    description: '"professional" must contain the stated fields.',
-    properties: {
-      _id: reference('_id'),
-      firstName: requiredString('firstName'),
-      lastName: requiredString('lastName')
-    }
-  },
-  patient: {
-    bsonType: 'object',
-    required: ['_id', 'firstName', 'lastName'],
-    additionalProperties: false,
-    description: '"patient" must contain the stated fields.',
-    properties: {
-      _id: reference('_id'),
-      firstName: requiredString('firstName'),
-      lastName: requiredString('lastName')
-    }
-  },
-  service: {
-    bsonType: 'object',
-    additionalProperties: false,
-    required: ['name', 'duration', 'price'],
-    description: '"service" is required and must contain the stated fields.',
-    properties: {
-      name: requiredString('name'),
-      duration: {
-        bsonType: 'int',
-        description: '"duration" is required and is of int type'
       },
-      price: {
-        bsonType: 'decimal',
-        description: '"price" is required and is of decimal type'
-      }
-    }
-  },
-  notes: requiredString('service'),
-  payment: {
-    bsonType: 'object',
-    required: ['method', 'value'],
-    additionalProperties: false,
-    description: '"payment" must contain the stated fields.',
-    properties: {
-      method: {
-        enum: ['cash', 'card'],
-        description: '"method" is required and can only be one of the given enum values'
-      },
-      value: {
-        bsonType: ['decimal'],
-        description: '"value" is required and is of decimal type'
-      }
+      required: ['email', 'password', 'roles']
     }
   }
-}, ['payment'])
+}
 
-export const serviceSchema = new MongoSchema(
-  {
-    name: requiredString('name'),
-    duration: {
-      bsonType: 'number',
-      description: '"duration" is required and is of number type'
-    },
-    price: {
-      bsonType: 'decimal',
-      description: '"price" is required and is of decimal type'
+const professionalSchema: BSONSchema = {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      additionalProperties: false,
+      properties: {
+        _id: {},
+        center_id,
+        firstName,
+        lastName,
+        email,
+      },
+      required: ['center_id', 'firstName', 'lastName', 'email']
     }
   }
-)
+}
+
+const patientSchema: BSONSchema = {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      additionalProperties: false,
+      properties: {
+        _id: {},
+        center_id,
+        firstName,
+        lastName,
+        email,
+        mainProfessionalName: {
+          bsonType: 'string',
+          description: '"mainProfessionalName" must be a valid string',
+        }
+      },
+      required: ['center_id', 'firstName', 'lastName', 'email', 'mainProfessionalName']
+    }
+  }
+}
+
+const serviceSchema: BSONSchema = {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      additionalProperties: false,
+      properties: {
+        _id: {},
+        name,
+        duration: {
+          bsonType: 'int',
+          description: '"duration" is required and is of int type'
+        },
+        price: {
+          bsonType: 'decimal',
+          description: '"price" is required and is of decimal type'
+        }
+      },
+      required: ['name', 'duration', 'price']
+    }
+  }
+}
+
+const service = serviceSchema.validator.$jsonSchema
+delete service.properties._id
+
+const appointmentSchema: BSONSchema = {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      additionalProperties: false,
+      properties: {
+        _id: {},
+        date: {
+          bsonType: 'date',
+          description: '"date" is required and must be of type date'
+        },
+        center_id,
+        professional: {
+          bsonType: 'object',
+          required: ['_id', 'firstName', 'lastName'],
+          additionalProperties: false,
+          description: '"professional" must contain the stated fields.',
+          properties: {
+            _id,
+            firstName,
+            lastName
+          }
+        },
+        patient: {
+          bsonType: 'object',
+          required: ['_id', 'firstName', 'lastName'],
+          additionalProperties: false,
+          description: '"patient" must contain the stated fields.',
+          properties: {
+            _id,
+            firstName,
+            lastName
+          }
+        },
+        service: {
+          ...service,
+          description: '"service" is required and must contain the stated fields.',
+        },
+        notes: {
+          bsonType: 'string',
+          description: '"notes" must be a valid string',
+        },
+        payment: {
+          bsonType: 'object',
+          required: ['method', 'value'],
+          additionalProperties: false,
+          description: '"payment" must contain the stated fields.',
+          properties: {
+            method: {
+              enum: ['cash', 'card'],
+              description: '"method" is required and can only be one of the given enum values'
+            },
+            value: {
+              bsonType: ['decimal'],
+              description: '"value" is required and is of decimal type'
+            }
+          }
+        }
+      },
+      required: ['date', 'center_id', 'professional', 'patient', 'service', 'notes']
+    }
+  }
+}
+
+const collectionsMap = {
+  centers: centerSchema,
+  users: userSchema,
+  professionals: professionalSchema,
+  patients: patientSchema,
+  services: serviceSchema,
+  appointments: appointmentSchema
+}
+
+;(async () => {
+  const uri = process.env.DB_URI_ADMIN
+  const dbName = process.env.DB_NAME
+  if (!uri || !dbName) {
+    throw new Error('Missing DB uri or name')
+  }
+
+  const client = new MongoClient(
+    uri,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+
+  try {
+    await client.connect()
+    const db = client.db(dbName)
+
+    for (const collection in collectionsMap) {
+      console.log(`Adding validator to "${collection}" collection...`)
+      // @ts-ignore
+      const validator = collectionsMap[collection].validator
+      await db.command({
+        collMod: collection,
+        validator,
+        validationLevel: 'moderate' // Avoid problems when applying document versioning pattern
+      }).catch(e => {
+        if (e.code === 26) {
+          return db.createCollection(collection, { validator, validationLevel: 'moderate' })
+        }
+        throw e
+      })
+      console.log(` ✔ ️Validator added to "${collection}"`)
+    }
+    console.log('\x1b[32m','Successfully added/updated all the validators')
+  } catch (e) {
+    console.error(e)
+  } finally {
+    await client.close()
+  }
+})()
