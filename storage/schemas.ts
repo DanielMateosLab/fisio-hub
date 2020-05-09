@@ -106,6 +106,8 @@ const userSchema: BSONSchema = {
             description: 'role in "roles" must contain the stated properties',
             properties: {
               _id,
+              firstName,
+              lastName,
               centerName: {
                 bsonType: 'string',
                 description: '"centerName" is required and must be a valid string',
@@ -151,12 +153,18 @@ const patientSchema: BSONSchema = {
         firstName,
         lastName,
         email,
-        mainProfessionalName: {
-          bsonType: 'string',
-          description: '"mainProfessionalName" must be a valid string',
+        mainProfessional: {
+          bsonType: 'object',
+          additionalProperties: false,
+          description: '"mainProfessional" is required and of type object',
+          properties: {
+            firstName,
+            lastName
+          },
+          required: ['firstName', 'lastName']
         }
       },
-      required: ['center_id', 'firstName', 'lastName', 'email', 'mainProfessionalName']
+      required: ['center_id', 'firstName', 'lastName', 'email', 'mainProfessional']
     }
   }
 }
