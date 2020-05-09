@@ -1,4 +1,5 @@
 require('dotenv').config()
+import { unlink } from 'fs'
 import { MongoClient } from 'mongodb'
 
 type BSONType =
@@ -301,6 +302,10 @@ const collectionsMap = {
         throw e
       })
       console.log(` ✔ ️Validator added to "${collection}"`)
+      console.log('Removing schemas.js...')
+      unlink(__dirname + __filename, err => {
+        throw err
+      })
     }
     console.log('\x1b[32m','Successfully added/updated all the validators')
   } catch (e) {
