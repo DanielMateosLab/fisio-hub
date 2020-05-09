@@ -48,7 +48,7 @@ export interface Service {
 export interface Appointment {
   _id?: ObjectId
   center_id: ObjectId
-  date: string
+  date: Date
   professional: {
     _id: ObjectId
     firstName: string
