@@ -269,6 +269,7 @@ const collectionsMap = {
 }
 
 ;(async () => {
+  let completed = false
   const uri = process.env.DB_URI_ADMIN
   const dbName = process.env.DB_NAME
   if (!uri || !dbName) {
@@ -302,15 +303,22 @@ const collectionsMap = {
         throw e
       })
       console.log(` ✔ ️Validator added to "${collection}"`)
-      console.log('Removing schemas.js...')
-      unlink(__dirname + __filename, err => {
-        throw err
-      })
     }
-    console.log('\x1b[32m','Successfully added/updated all the validators')
+    console.log('\x1b[32m%s\x1b[0m','Successfully added/updated all the validators')
+    completed = true
   } catch (e) {
     console.error(e)
   } finally {
     await client.close()
+    if (completed) {
+      console.log(`Removing ${__filename}...`)
+      unlink(__filename, err => {
+        if (!err) {
+          console.log('Done!')
+        } else {
+          console.error('Could not remove schemas.js, do it manually if you wish')
+        }
+      })
+    }
   }
 })()
