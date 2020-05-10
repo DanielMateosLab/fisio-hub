@@ -7,6 +7,7 @@
     "docker": "docker-compose up -d && docker-compose logs -f server",
     "build": "next build",
     "start": "next start",
+    "dbschemas": "tsc storage/schemas.ts && node storage/schemas.js",
     "test": "jest"
   },
   "dependencies": {
