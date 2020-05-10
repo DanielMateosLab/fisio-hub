@@ -21,6 +21,7 @@ export interface User {
 export interface Professional {
   _id?: ObjectId
   center_id: ObjectId
+  isAdmin: boolean
   firstName: string
   lastName: string
   email: string

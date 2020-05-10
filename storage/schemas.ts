@@ -48,7 +48,7 @@ const _id: Properties = {
 }
 const center_id: Properties = {
   bsonType: 'objectId',
-    description: '"center_id" must be a valid objectId reference',
+  description: '"center_id" must be a valid objectId reference',
 }
 const name: Properties = {
   bsonType: 'string',
@@ -134,6 +134,10 @@ const professionalSchema: BSONSchema = {
       properties: {
         _id: {},
         center_id,
+        isAdmin: {
+          bsonType: 'bool',
+          description: '"isAdmin" is required and of type bool'
+        },
         firstName,
         lastName,
         email,
