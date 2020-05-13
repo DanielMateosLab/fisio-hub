@@ -1,6 +1,6 @@
 require('dotenv').config()
 import { unlink } from 'fs'
-import { MongoClient } from 'mongodb'
+import { Db, MongoClient } from 'mongodb'
 
 type BSONType =
   | 'number'
@@ -271,6 +271,27 @@ const collectionsMap = {
   appointments: appointmentSchema
 }
 
+async function addValidatorsToDb(db: Db) {
+  console.log('\x1b[4m%s\x1b[0m', `Working on DB: ${db.databaseName}`)
+  for (const collection in collectionsMap) {
+    console.log(`Adding validator to "${collection}" collection...`)
+    // @ts-ignore
+    const validator = collectionsMap[collection].validator
+    await db.command({
+      collMod: collection,
+      validator,
+      validationLevel: 'moderate' // Avoid problems when applying document versioning pattern
+    }).catch(e => {
+      if (e.code === 26) {
+        return db.createCollection(collection, { validator, validationLevel: 'moderate' })
+      }
+      throw e
+    })
+    console.log(` ✔ ️Validator added to "${collection}"`)
+  }
+}
+
+// Script to add the validators to a cluster
 ;(async () => {
   let completed = false
   const uri = process.env.DB_URI_ADMIN
@@ -289,30 +310,21 @@ const collectionsMap = {
 
   try {
     await client.connect()
-    const db = client.db(dbName)
 
-    for (const collection in collectionsMap) {
-      console.log(`Adding validator to "${collection}" collection...`)
-      // @ts-ignore
-      const validator = collectionsMap[collection].validator
-      await db.command({
-        collMod: collection,
-        validator,
-        validationLevel: 'moderate' // Avoid problems when applying document versioning pattern
-      }).catch(e => {
-        if (e.code === 26) {
-          return db.createCollection(collection, { validator, validationLevel: 'moderate' })
-        }
-        throw e
-      })
-      console.log(` ✔ ️Validator added to "${collection}"`)
-    }
+    const db = client.db(dbName)
+    await addValidatorsToDb(db)
+
+    // For testing purposes
+    const testDb = client.db('test')
+    await addValidatorsToDb(testDb)
+
     console.log('\x1b[32m%s\x1b[0m','Successfully added/updated all the validators')
     completed = true
   } catch (e) {
     console.error(e)
   } finally {
     await client.close()
+    // Remove schemas.js file
     if (completed) {
       console.log(`Removing ${__filename}...`)
       unlink(__filename, err => {
