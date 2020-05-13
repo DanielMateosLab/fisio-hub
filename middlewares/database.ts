@@ -5,6 +5,7 @@ import { DbUnavailableError } from '../utils/errors'
 const client = new MongoClient(process.env.DB_URI!, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  w: 'majority'
 })
 
 export default async function database(
