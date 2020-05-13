@@ -9,7 +9,7 @@ export interface User {
   _id?: ObjectId
   email: string
   password: string
-  roles: Array<{
+  roles?: Array<{
     _id: ObjectId
     firstName: string
     lastName: string

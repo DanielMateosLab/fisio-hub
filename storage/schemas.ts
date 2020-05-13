@@ -99,7 +99,6 @@ const userSchema: BSONSchema = {
         roles: {
           bsonType: 'array',
           minItems: 1,
-          description: 'At least one role is required',
           items: {
             bsonType: 'object',
             required: ['_id', 'centerName', 'role'],
@@ -121,7 +120,7 @@ const userSchema: BSONSchema = {
           }
         }
       },
-      required: ['email', 'password', 'roles']
+      required: ['email', 'password']
     }
   }
 }
