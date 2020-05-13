@@ -9,9 +9,9 @@ export default (e: any, req: NextApiRequest, res: NextApiResponse) => {
     e = parseYupValidationErrors(e)
   }
 
-  let { status = 500, message, errors } = e
+  let { status = 500, message, errmsg, errors } = e
   if (!message) {
-    message = defaultErrorMessage
+    message = errmsg? errmsg : defaultErrorMessage
   }
 
   res.status(status).json({ message, errors })
