@@ -4,7 +4,7 @@
     - cIXs: center_id+date+professional_id || cid+pid+date, center_id+patient_id+date.
     Select between selectivity of prof/pat ids and date sorting in memory (which should be avoided).
 - Get user. IX on email.
-- Get professional. IX on center_id ?
+- Get professional. IX on center_id+email ?
   - Get professional patients. Sort by last appointment.
 - Get center patients by last name and first name. cIX center_id+lastName+firstName, center_id+firstName.
   First and last name fields should have text indexes.
