@@ -5,17 +5,16 @@ export interface Center {
   name: string
 }
 
+export interface Role {
+  role: 'professional' | 'patient'
+  role_id: ObjectId
+  center_id: ObjectId // It will be the shard key (hashed) for the main collections
+}
 export interface User {
   _id?: ObjectId
   email: string
-  password: string
-  roles?: Array<{
-    _id: ObjectId
-    firstName: string
-    lastName: string
-    role: 'professional' | 'patient'
-    centerName: string
-  }>
+  password?: string
+  roles?: Role[]
 }
 
 export interface Professional {

@@ -98,29 +98,23 @@ const userSchema: BSONSchema = {
         },
         roles: {
           bsonType: 'array',
-          minItems: 1,
           items: {
             bsonType: 'object',
-            required: ['_id', 'centerName', 'role'],
+            required: ['role_id', 'center_id', 'role'],
             additionalProperties: false,
             description: 'role in "roles" must contain the stated properties',
             properties: {
-              _id,
-              firstName,
-              lastName,
-              centerName: {
-                bsonType: 'string',
-                description: '"centerName" is required and must be a valid string',
-              },
               role: {
                 enum: ['professional', 'patient'],
                 description: '"role" is required and must be one of the listed options. '
-              }
+              },
+              role_id: _id,
+              center_id,
             }
           }
         }
       },
-      required: ['email', 'password']
+      required: ['email']
     }
   }
 }
