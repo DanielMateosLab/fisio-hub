@@ -1,40 +1,59 @@
-import { Db, Collection, ObjectId } from 'mongodb'
-import bcrypt from 'bcryptjs'
+import { Collection, MongoClient, ObjectId } from 'mongodb'
 import { FieldValidationError } from '../utils/errors'
+import { Professional, Role, User } from './types'
 
-export interface Professional {
-  _id?: ObjectId
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-}
-
-let professionals: Collection
+let client: MongoClient
+let professionals: Collection<Professional>
+let users: Collection<User>
 
 export default class ProfessionalsDAO {
-  static injectDB(db: Db): void {
-    if (professionals) {
+  static injectDB(mongoClient: MongoClient): void {
+    if (client && professionals && users) {
       return
     }
+    const db = mongoClient.db(process.env.DB_NAME)
+    client = mongoClient
     professionals = db.collection('professionals')
+    users = db.collection('users')
   }
 
-  static async addProfessional(professional: Professional): Promise<Professional> {
-    const { email } = professional
-    const alreadyExists = await professionals.findOne({ email })
+  /** Finds by center_id and email. Index-supported query. */
+  static async getProfessional(center_id: ObjectId, email?: string) {
+    return await professionals.findOne({ center_id, email })
+  }
+
+  static async addProfessional(professional: Professional): Promise<{ success: true }> {
+    const { center_id, email } = professional
+    professional._id = new ObjectId()
+
+    const alreadyExists = await this.getProfessional(center_id, email)
     if (alreadyExists) {
-      const error = 'Ya hay un profesional con este correo electrónico'
-      throw new FieldValidationError(null,'email', error)
+      throw new FieldValidationError(null,'email', 'Ya hay un profesional con este correo electrónico')
     }
 
-    const hashedPassword = await bcrypt.hash(professional.password, 12)
+    const role: Role = {
+      role: 'professional',
+      role_id: professional._id,
+      center_id
+    }
 
-    const result = await professionals.insertOne({
-      ...professional,
-      password: hashedPassword
-    })
+    const user = await users.findOne({ email })
+    if (!user) {
+      await users.insertOne({ email })
+      // TODO: send password-creation email
+    }
 
-    return result.ops[0]
+    const session = client.startSession()
+    const transactionResult = await session.withTransaction(async () => {
+      await professionals.insertOne(professional, { session }).then(r => r.ops[0])
+
+      await users.updateOne(
+        { email },
+        { $addToSet: { roles: role }},
+        { session })
+    }) as any
+    session.endSession()
+
+    return transactionResult && { success: true }
   }
 }
