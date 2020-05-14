@@ -1,5 +1,4 @@
 import UsersDAO from '../../storage/usersDAO'
-import usersDAO from '../../storage/usersDAO'
 import { Collection, MongoClient } from 'mongodb'
 import { User } from '../../storage/types'
 import { mockRole } from '../testUtils'
@@ -19,7 +18,7 @@ describe('usersDAO', () => {
     users = db.collection('users')
     UsersDAO.injectDB(db)
   })
-  beforeEach(async () => {
+  beforeEach(() => {
     mockUser = {
       email: 'a@a.com',
       password: 'mockPassword'
@@ -80,18 +79,18 @@ describe('usersDAO', () => {
   describe('addRole', () => {
     it('should add a role to the user', async () => {
       try {
-        await usersDAO.addUser(mockUser)
+        await UsersDAO.addUser(mockUser)
 
-        const role = await usersDAO.addRole(mockUser.email, mockRole)
+        const { success } = await UsersDAO.addRole(mockUser.email, mockRole)
 
-        expect(role).toEqual(role)
+        expect(success).toEqual(true)
       } catch (e) {
         expect(e).toBeNull()
       }
     })
     it('should throw a 404 error with a non-existing email', async () => {
       try {
-        const role = await usersDAO.addRole(mockUser.email, mockRole)
+        const role = await UsersDAO.addRole(mockUser.email, mockRole)
 
         expect(role).toBeNull()
       } catch(e) {

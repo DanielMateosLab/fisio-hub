@@ -1,4 +1,4 @@
-import { Collection, Db } from 'mongodb'
+import { Collection, Db, ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import { FieldValidationError, NotFoundError } from '../utils/errors'
 import { Role, User } from './types'
@@ -15,6 +15,10 @@ export default class UsersDAO {
 
   static async getUserByEmail(email: string) {
     return await users.findOne({ email })
+  }
+
+  static async getUserById(_id: ObjectId) {
+    return await users.findOne({ _id })
   }
 
   static async addUser(user: User): Promise<User> {
@@ -38,7 +42,7 @@ export default class UsersDAO {
     return result.ops[0]
   }
 
-  static async addRole(email: string, role: Role): Promise<Role> {
+  static async addRole(email: string, role: Role) {
     const user = await this.getUserByEmail(email)
     if (!user) {
       throw new NotFoundError('No se ha encontrado ningún usuario con el email ' + email)
@@ -46,6 +50,6 @@ export default class UsersDAO {
 
     await users.updateOne({ email }, { $addToSet: { roles: role }})
 
-    return role
+    return { success: true }
   }
 }

@@ -2,13 +2,13 @@ import ProfessionalsDAO from "../../storage/professionalsDAO";
 import { registerValidationSchema } from '../../utils/validation'
 import nextConnect from 'next-connect'
 import middleware from '../../middlewares/middleware'
-import { professionals } from '../../middlewares/collections'
+import { centers, professionals, users } from '../../middlewares/collections'
 import extractUser from '../../utils/extractUser'
 import onError from '../../middlewares/onError'
 
 const handler = nextConnect({ onError })
 
-handler.use(middleware, professionals)
+handler.use(middleware, professionals, users, centers)
 
 handler.post(async (req, res, next) => {
   try {

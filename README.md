@@ -3,8 +3,8 @@
 - Get appointments. Filter by date and professional. 
     - cIXs: center_id+date+professional_id || cid+pid+date, center_id+patient_id+date.
     Select between selectivity of prof/pat ids and date sorting in memory (which should be avoided).
-- Get user. IX on email.
-- Get professional. IX on center_id+email ?
+- Get user. unique IX on email.
+- Get professional. Unique IX on center_id+email
   - Get professional patients. Sort by last appointment.
 - Get center patients by last name and first name. cIX center_id+lastName+firstName, center_id+firstName.
   First and last name fields should have text indexes.
@@ -29,7 +29,7 @@
 - Create/destroy sessions (login/logout) for a user_id and role_id and type (professional/patient).
 
 ## Sharding
-A good compound sharding key would be the hashed_center_id and the last_name, 
+A good compound sharding key would be the center_id and the last_name, 
 properties present in all sharding-candidate collections but user. This allows routed queries
 and a good distribution over shard nodes.
 

@@ -1,4 +1,4 @@
-import { Collection, Db, ObjectId } from 'mongodb'
+import { Collection, Db } from 'mongodb'
 import { Center } from './types'
 
 let centers: Collection<Center>
@@ -11,11 +11,12 @@ export default class CentersDAO {
     centers = db.collection('centers')
   }
 
-  static async getCenterById(_id: ObjectId) {
+  static async getCenterById(_id: string) {
     return await centers.findOne({ _id })
   }
 
   static async createCenter(center: Center) {
-    return await centers.insertOne(center).then(writeOpResult => writeOpResult.ops[0])
+    const _id = center.name + await centers.find({ name: center.name }).count() as any
+    return await centers.insertOne({ ...center, _id }).then(writeOpResult => writeOpResult.ops[0])
   }
 }

@@ -1,37 +1,67 @@
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
-import { ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import { User } from '../storage/types'
+import { Professional, User } from '../storage/types'
 import { NextApiRequest } from 'next'
 import { LoginError } from './errors'
 import UsersDAO from '../storage/usersDAO'
+import ProfessionalsDAO from '../storage/professionalsDAO'
 
-passport.serializeUser<User, string>((user, done) => {
-  done(null, user._id!.toString())
+interface UserSessionInfo {
+  email: string
+  center_id?: string
+}
+
+export type RequestUser = User & { professional?: Professional }
+
+passport.serializeUser<RequestUser, UserSessionInfo>((user, done) => {
+  done(null, {
+    email: user.email,
+    center_id: user.professional?.center_id
+    })
 })
 
-passport.deserializeUser<User, string, NextApiRequest>((req, id, done) => {
+passport.deserializeUser<RequestUser, UserSessionInfo, NextApiRequest>(async (
+  req,
+  { email, center_id },
+  done
+) => {
   UsersDAO.injectDB(req.db)
-  UsersDAO.getUserById(new ObjectId(id))
-    .then(user => user && done(null, user))
+  ProfessionalsDAO.injectDB(req.dbClient)
+
+  const user = await UsersDAO.getUserByEmail(email)
+  const professional = user && center_id &&
+    await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(center_id, email)
+
+  user && done(null, {
+    ...user,
+    professional: professional || undefined
+  })
 })
 
 passport.use(new LocalStrategy(
   { usernameField: 'email', passReqToCallback: true },
-  async (req, email, password, done) => {
+  async (req, email, password, done: (error: any, user?: RequestUser) => void) => {
     try {
       UsersDAO.injectDB(req.db)
       const user = await UsersDAO.getUserByEmail(email)
       const isValidPassword = user && user.password && await bcrypt.compare(password, user.password)
 
       if (isValidPassword) {
-        done(null, user)
+        const professionalRoles = user?.roles?.filter(({ role }) => role == 'professional')
+        const uniqueProfessionalRole = professionalRoles && professionalRoles.length == 1 && professionalRoles[0]
+        const professional = uniqueProfessionalRole && await ProfessionalsDAO
+          .getProfessionalByCenterIdAndEmail(uniqueProfessionalRole.center_id, user!.email)
+
+        user && done(null, {
+          ...user,
+          professional: professional || undefined
+        })
       } else {
-        done(new LoginError(), false)
+        done(new LoginError())
       }
     } catch (e) {
-      done(new LoginError(), false)
+      done(new LoginError())
     }
   }
 ))

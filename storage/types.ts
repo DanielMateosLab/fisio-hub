@@ -1,15 +1,16 @@
 import { ObjectId } from 'bson'
 
 export interface Center {
-  _id?: ObjectId
+  _id?: string
   name: string
 }
 
 export interface Role {
   role: 'professional' | 'patient'
-  role_id: ObjectId
-  center_id: ObjectId // It will be the shard key (hashed) for the main collections
+  role_id: ObjectId // This is important for patients identification, as email is not unique
+  center_id: string // It will be the shard key (hashed) for the main collections
 }
+
 export interface User {
   _id?: ObjectId
   email: string
@@ -19,7 +20,7 @@ export interface User {
 
 export interface Professional {
   _id?: ObjectId
-  center_id: ObjectId
+  center_id: string
   isAdmin: boolean
   firstName: string
   lastName: string
@@ -28,7 +29,7 @@ export interface Professional {
 
 export interface Patient {
   _id?: ObjectId
-  center_id: ObjectId
+  center_id: string
   firstName: string
   lastName: string
   email: string
@@ -47,7 +48,7 @@ export interface Service {
 
 export interface Appointment {
   _id?: ObjectId
-  center_id: ObjectId
+  center_id: string
   date: Date
   professional: {
     _id: ObjectId

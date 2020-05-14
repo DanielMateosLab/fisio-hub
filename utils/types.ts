@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Professional } from '../storage/professionalsDAO'
+import { Professional } from 'storage/types'
 import { FieldError } from './errors'
 
 type NextHandler = (err?: any) => void

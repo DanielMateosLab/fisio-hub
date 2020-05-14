@@ -1,8 +1,8 @@
-import { Center, Professional, Role } from '../storage/types'
+import { Center, Professional, Role, User } from '../storage/types'
 import { ObjectId } from 'bson'
 
 export const mockCenter: Center = {
-  _id: new ObjectId(),
+  _id: 'mockCenter0',
   name: 'mockCenter'
 }
 
@@ -12,6 +12,11 @@ export const mockProfessional: Professional = {
   email: 'a@a.com',
   firstName: 'aaaa',
   lastName: 'bbbb cccc'
+}
+
+export const mockUser: User = {
+  email: 'a@a.com',
+  password: 'mockPassword'
 }
 
 export const mockRole: Role = {

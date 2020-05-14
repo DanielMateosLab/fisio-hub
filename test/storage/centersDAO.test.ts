@@ -17,7 +17,7 @@ describe('usersDAO', () => {
     centers = db.collection('centers')
     centersDAO.injectDB(db)
   })
-  beforeEach(() => {
+  beforeEach(async () => {
     mockCenter = require('../testUtils').mockCenter
   })
   afterEach(async () => {
@@ -37,7 +37,7 @@ describe('usersDAO', () => {
 
   describe('getCenter', () => {
     it('should return a center', async () => {
-      await centers.insertOne(mockCenter)
+      await centers.insertOne(mockCenter as any)
       const result = await centersDAO.getCenterById(mockCenter._id!)
 
       expect(result).toEqual(mockCenter)

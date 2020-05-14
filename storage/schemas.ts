@@ -47,8 +47,8 @@ const _id: Properties = {
   description: '"_id" must be a valid objectId reference',
 }
 const center_id: Properties = {
-  bsonType: 'objectId',
-  description: '"center_id" must be a valid objectId reference',
+  bsonType: 'string',
+  description: '"center_id" must be of type string',
 }
 const name: Properties = {
   bsonType: 'string',
@@ -73,7 +73,9 @@ const centerSchema: BSONSchema = {
       bsonType: 'object',
       additionalProperties: false,
       properties: {
-        _id: {},
+        _id: {
+          bsonType: 'string'
+        },
         name,
       },
       required: ['name']
