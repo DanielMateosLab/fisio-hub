@@ -24,26 +24,6 @@ export default class ProfessionalsDAO {
   static async getProfessionalByCenterId(center_id: string) {
     return await professionals.findOne({ center_id })
   }
-  static async getProfessionalById(_id: ObjectId) {
-    return await professionals.findOne({ _id })
-  }
-
-  static getUserProfessionals(user: User) {
-    if (!user.roles) return []
-
-    return user.roles.map(async (profile) => {
-      const { role, role_id, center_id } = profile
-      if (role !== 'professional') return
-
-      const { email } = await this.getProfessionalById(role_id) as any
-      if (!email) return
-
-      return {
-        center_id,
-        email
-      }
-    })
-  }
 
   static async addProfessional(professional: Professional): Promise<{ success: true }> {
     const { center_id, email } = professional
