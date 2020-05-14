@@ -3,7 +3,7 @@ import { Center } from './types'
 
 let centers: Collection<Center>
 
-export default class UsersDAO {
+export default class CentersDAO {
   static injectDB(db: Db): void {
     if (centers) {
       return
