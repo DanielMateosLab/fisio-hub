@@ -1,47 +1,48 @@
 import React from 'react'
-import CustomTextInput from 'components/customTextInput'
-import { registerValidationSchema } from 'utils/validation'
-import CustomForm from 'components/customForm'
-import { useGuestOnly, useUser } from 'utils/hooks'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-import SwitchAuthFooter from 'components/switchAuthFooter'
+import Stepper from '@material-ui/core/Stepper'
+import Step from '@material-ui/core/Step'
+import StepLabel from '@material-ui/core/StepLabel'
+import RegisterCenter from '../components/register/registerCenter'
+import AuthenticateUser from '../components/register/authenticateUser'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/rootReducer'
 
 const Register = () => {
-  const { mutate } = useUser()
-  useGuestOnly()
+  const { step } = useSelector((state: RootState) => state.register)
+  const steps = ['Tus datos de acceso', 'Algunos detalles más...']
+
+  function getStepContent(step: number) {
+    switch (step) {
+      case 0:
+        return <AuthenticateUser />
+      case 1:
+        return <RegisterCenter />
+      default:
+        return 'No deberías haber llegado hasta aquí'
+    }
+  }
 
   return (
     <Container maxWidth="xs">
       <Typography variant="h4" align="center" gutterBottom>
-        Regístrate
+        ¡Empieza a usar FisioHub!
       </Typography>
-      <CustomForm
-        initialValues={{
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          repeatPassword: ''
-        }}
-        validationSchema={registerValidationSchema}
-        submitButtonText="Registrarme"
-        path="/api/register"
-        handleResult={(({ professional }) => {
-          mutate(professional)
+
+      <Stepper activeStep={step}>
+        {steps.map((label) => {
+          const stepProps: { completed?: boolean } = {}
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          )
         })}
-      >
-        <CustomTextInput name="firstName" label="Nombre"/>
-        <CustomTextInput name="lastName" label="Apellidos"/>
-        <CustomTextInput name="email" label="Correo electrónico"/>
-        <CustomTextInput name="password" type="password" label="Contraseña"/>
-        <CustomTextInput
-          name="repeatPassword"
-          label="Repite la contraseña"
-          type="password"
-        />
-      </CustomForm>
-      <SwitchAuthFooter auxiliaryText="¿Ya estás registrado? " linkText="Inicia sesión" href="/login" />
+      </Stepper>
+
+      { getStepContent(step) }
+      
     </Container>
   )
 }

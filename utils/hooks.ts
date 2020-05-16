@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import { Professional } from '../storage/professionalsDAO'
+import { Professional } from '../storage/types'
 import Router from 'next/router'
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())

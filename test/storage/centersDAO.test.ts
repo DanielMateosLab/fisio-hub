@@ -2,8 +2,10 @@ import { Collection, MongoClient } from 'mongodb'
 import { Center } from '../../storage/types'
 import usersDAO from '../../storage/usersDAO'
 import centersDAO from '../../storage/centersDAO'
+import { mockProfessional } from '../testUtils'
 
 require('dotenv').config()
+process.env.DB_NAME = 'test'
 
 describe('usersDAO', () => {
   let client: MongoClient
@@ -13,9 +15,9 @@ describe('usersDAO', () => {
   beforeAll(async () => {
     client = await MongoClient.connect(process.env.DB_URI!, {
       useNewUrlParser: true, useUnifiedTopology: true })
-    const db = client.db('test')
+    const db = client.db(process.env.DB_NAME)
     centers = db.collection('centers')
-    centersDAO.injectDB(db)
+    centersDAO.injectDB(client)
   })
   beforeEach(async () => {
     mockCenter = require('../testUtils').mockCenter
@@ -29,9 +31,10 @@ describe('usersDAO', () => {
 
   describe('createCenter', () => {
     it('should return the created center', async () => {
-      const center = await centersDAO.createCenter(mockCenter)
+      const { center_id, ...professional } = mockProfessional
+      const { success } = await centersDAO.createCenter(mockCenter, professional)
 
-      expect(center).toEqual(mockCenter)
+      expect(success).toEqual(true)
     })
   })
 

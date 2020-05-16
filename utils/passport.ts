@@ -55,7 +55,7 @@ passport.use(new LocalStrategy(
 
         user && done(null, {
           ...user,
-          professional: professional || undefined
+          professional: !req.query.avoidRoleSelection && professional || undefined
         })
       } else {
         done(new LoginError())

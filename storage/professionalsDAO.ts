@@ -25,11 +25,11 @@ export default class ProfessionalsDAO {
     return await professionals.findOne({ center_id })
   }
 
-  static async addProfessional(professional: Professional): Promise<{ success: true }> {
+  static async addProfessional(professional: Professional, newCenter = false): Promise<{ success: true }> {
     const { center_id, email } = professional
     professional._id = new ObjectId()
 
-    const alreadyExists = await this.getProfessionalByCenterIdAndEmail(center_id, email)
+    const alreadyExists = !newCenter && await this.getProfessionalByCenterIdAndEmail(center_id, email)
     if (alreadyExists) {
       throw new FieldValidationError(null,'email', 'Ya hay un profesional con este correo electrónico')
     }

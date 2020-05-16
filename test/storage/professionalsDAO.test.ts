@@ -52,7 +52,6 @@ describe('professionalsDAO', () => {
         expect(success).toEqual(true)
         expect(user!.roles![0]).toBeDefined()
       } catch (error) {
-        console.log(JSON.stringify(error, null, 2))
         expect(error).toBeNull()
       }
     })

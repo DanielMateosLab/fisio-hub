@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Form, Formik, FormikValues } from 'formik'
-import handleSubmit from '../utils/handleSubmit'
+import handleSubmit from '../../utils/handleSubmit'
 import Grid from '@material-ui/core/Grid'
 import FormFooter from './formFooter'
 import { InferType } from 'prop-types'
-import { HandleResult } from '../utils/types'
+import { HandleResult } from '../../utils/types'
 
 
 interface CustomFormProps<T extends FormikValues = FormikValues> {
@@ -14,6 +14,7 @@ interface CustomFormProps<T extends FormikValues = FormikValues> {
   path: string
   handleResult: HandleResult
   submitButtonText: string
+  submitButtonDisabled?: boolean
 }
 
 /**
@@ -27,7 +28,8 @@ const CustomForm: React.FC<CustomFormProps> = (
     path,
     handleResult,
     submitButtonText,
-    children
+    children,
+    submitButtonDisabled
   }) => {
   let [ submitError, setSubmitError ] = useState('')
 
@@ -47,6 +49,7 @@ const CustomForm: React.FC<CustomFormProps> = (
               submitButtonText={submitButtonText}
               submitError={submitError}
               isSubmitting={isSubmitting}
+              disabled={submitButtonDisabled}
             />
           </Grid>
         </Form>

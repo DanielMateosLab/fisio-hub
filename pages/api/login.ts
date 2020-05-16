@@ -10,6 +10,7 @@ const handler = nextConnect({ onError })
 handler.use(middleware)
 handler.use(professionals)
 
+// To avoid roleSelection in passport, call the endpoint with query param avoidRoleSelection="true"
 handler
   .post(passport.authenticate('local'), (req, res) => {
     res.json({ professional: extractUser(req) })

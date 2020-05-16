@@ -3,7 +3,6 @@ import { User } from 'passport'
 import { ResponseBody } from './utils/types'
 import { RequestUser } from './utils/passport'
 
-
 declare module 'http' {
   interface IncomingMessage {
     db: Db

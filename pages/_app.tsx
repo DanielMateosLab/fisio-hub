@@ -4,7 +4,8 @@ import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import theme from '../utils/theme'
 import Navbar from '../components/navbar'
 import Container from '@material-ui/core/Container'
-
+import { Provider } from 'react-redux'
+import store from 'redux/store'
 
 // import App from 'next/app'
 
@@ -13,10 +14,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <CssBaseline />
       <ThemeProvider theme={theme}>
-        <Navbar />
-        <Container style={{paddingTop: "24px"}}>
-          <Component {...pageProps} />
-        </Container>
+        <Provider store={store} >
+          <Navbar />
+          <Container style={{ paddingTop: "24px", paddingBottom: "24px"}}>
+            <Component {...pageProps} />
+          </Container>
+        </Provider>
       </ThemeProvider>
     </>
   )

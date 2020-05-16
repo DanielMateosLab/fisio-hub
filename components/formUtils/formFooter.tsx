@@ -7,9 +7,10 @@ interface FormFooterProps {
   submitError: string
   isSubmitting: boolean
   submitButtonText: string
+  disabled?: boolean
 }
 
-const FormFooter = ({submitError, isSubmitting, submitButtonText}: FormFooterProps) => (
+const FormFooter = ({submitError, isSubmitting, submitButtonText, disabled}: FormFooterProps) => (
   <>
     {submitError && (
       <Grid item style={{ marginTop: 18 }} container justify="center" xs={12}>
@@ -19,7 +20,7 @@ const FormFooter = ({submitError, isSubmitting, submitButtonText}: FormFooterPro
     <Grid item style={{ marginTop: 18 }} container justify="center">
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={ disabled || isSubmitting }
         variant="contained"
         color="primary"
       > { submitButtonText } </Button>
