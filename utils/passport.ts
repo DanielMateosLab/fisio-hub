@@ -1,18 +1,16 @@
 import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 import bcrypt from 'bcryptjs'
-import { Professional, User } from '../storage/types'
 import { NextApiRequest } from 'next'
 import { LoginError } from './errors'
 import UsersDAO from '../storage/usersDAO'
 import ProfessionalsDAO from '../storage/professionalsDAO'
+import { RequestUser } from '../pages/api/users'
 
 interface UserSessionInfo {
   email: string
   center_id?: string
 }
-
-export type RequestUser = User & { professional?: Professional }
 
 passport.serializeUser<RequestUser, UserSessionInfo>((user, done) => {
   done(null, {

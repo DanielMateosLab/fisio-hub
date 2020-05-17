@@ -18,8 +18,8 @@ const RegisterCenter = () => {
       }}
       validationSchema={registerValidationSchema}
       submitButtonText="Finalizar"
-      path="/api/register"
-      handleResult={(({ professional }) => {
+      requestEndpoint={{ path: "/api/centers" }}
+      handleResult={(() => {
         return true
       })}
     >

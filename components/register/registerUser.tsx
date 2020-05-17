@@ -20,8 +20,9 @@ const RegisterUser = () => {
           repeatPassword: ''
         }}
         validationSchema={registerValidationSchema}
+        validateOnChange={false}
         submitButtonText="Registrarme"
-        path="/api/register"
+        requestEndpoint={{ path: "/api/users" }}
         handleResult={() => {
           dispatch(setStep(1))
         }}

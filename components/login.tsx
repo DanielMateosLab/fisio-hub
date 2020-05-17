@@ -18,7 +18,7 @@ const Login = ({ email, handleResult } : Props) => {
       }}
       validationSchema={loginValidationSchema}
       submitButtonText="Iniciar sesión"
-      path="/api/login"
+      requestEndpoint={{ path: "/api/login" }}
       handleResult={handleResult}
     >
       { email

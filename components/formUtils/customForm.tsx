@@ -4,17 +4,19 @@ import handleSubmit from '../../utils/handleSubmit'
 import Grid from '@material-ui/core/Grid'
 import FormFooter from './formFooter'
 import { InferType } from 'prop-types'
-import { HandleResult } from '../../utils/types'
+import { HandleResult, RequestEndpoint } from '../../utils/types'
 
 
 interface CustomFormProps<T extends FormikValues = FormikValues> {
   initialValues: T
   validationSchema: InferType<T>
   /** The path where a POST request is made when submitting the form. Via {@link handleSubmit} */
-  path: string
+  requestEndpoint: RequestEndpoint
   handleResult: HandleResult
   submitButtonText: string
   submitButtonDisabled?: boolean
+  validateOnBlur?: boolean
+  validateOnChange?: boolean
 }
 
 /**
@@ -25,11 +27,12 @@ interface CustomFormProps<T extends FormikValues = FormikValues> {
 const CustomForm: React.FC<CustomFormProps> = (
   { initialValues,
     validationSchema,
-    path,
+    requestEndpoint,
     handleResult,
     submitButtonText,
     children,
-    submitButtonDisabled
+    submitButtonDisabled,
+    ...optionalProps
   }) => {
   let [ submitError, setSubmitError ] = useState('')
 
@@ -37,8 +40,10 @@ const CustomForm: React.FC<CustomFormProps> = (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
+      validateOnBlur={optionalProps.validateOnBlur}
+      validateOnChange={optionalProps.validateOnChange}
       onSubmit={async (values, formikHelpers ) => {
-        await handleSubmit(values, formikHelpers, setSubmitError, path, handleResult)
+        await handleSubmit(values, formikHelpers, setSubmitError, requestEndpoint, handleResult)
       }}
     >
       {({ isSubmitting }) => (

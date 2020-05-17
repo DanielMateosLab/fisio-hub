@@ -31,7 +31,7 @@ export default class ProfessionalsDAO {
 
     const alreadyExists = !newCenter && await this.getProfessionalByCenterIdAndEmail(center_id, email)
     if (alreadyExists) {
-      throw new FieldValidationError(null,'email', 'Ya hay un profesional con este correo electrónico')
+      throw new FieldValidationError('email', 'Ya hay un profesional con este correo electrónico')
     }
 
     const role: Role = {

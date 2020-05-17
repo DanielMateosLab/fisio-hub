@@ -27,7 +27,7 @@ export default class UsersDAO {
     const alreadyExists = await this.getUserByEmail(email)
     if (alreadyExists) {
       const error = 'Ya hay un usuario con este correo electrónico'
-      throw new FieldValidationError(null,'email', error)
+      throw new FieldValidationError('email', error)
     }
 
     if (user.password) {

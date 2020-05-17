@@ -1,5 +1,5 @@
 // @ts-noCheck
-import { postHandler } from '../../pages/api/user'
+import { postHandler } from '../../pages/api/users'
 import { userValidationSchema } from '../../utils/validation'
 import UsersDAO from '../../storage/usersDAO'
 import { mockUser } from '../testUtils'

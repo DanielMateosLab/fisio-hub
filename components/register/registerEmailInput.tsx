@@ -7,6 +7,8 @@ import EmailAdornment from './emailAdornment'
 import SetMethodLink from './setMethodLink'
 import { useDispatch } from 'react-redux'
 import { setRegisteredEmail } from 'features/user/registerSlice'
+import { UserResponseBody } from '../../pages/api/users'
+import fetcher from '../../utils/fetcher'
 
 export type UserStatus = 'noChecked' | 'checking' | 'registered' | 'free'
 
@@ -14,33 +16,31 @@ const RegisterEmailInput: React.FC = () => {
   const [ userStatus, setUserStatus ] = useState<UserStatus>('noChecked')
   const dispatch = useDispatch()
 
-  async function validateEmailExistence(email: string) {
-    if (userStatus == 'free') {
-      return
-    }
+  async function validateEmail(email: string) {
+    if (userStatus === 'free') return
     setUserStatus('noChecked')
-    dispatch(setRegisteredEmail('')) // Clean registeredEmail on new inputs
 
-    const isEmail = await Yup
-      .object({ email: Yup.string().email() })
-      .validate({ email })
-      .then(({ email } ) => !(email.length < 1))
+    const isEmail = await Yup.string()
+      .email('La dirección de correo electrónico no es válida')
+      .required('Campo obligatorio')
+      .validate(email)
       .catch(() => false)
 
     if (!isEmail) return
 
-    setTimeout(() => {
-      setUserStatus('checking')
+    setUserStatus('checking')
 
-      const emailExists = email == 'daniel.mat.lab@gmail.com' // TODO: this will be a query to the DB
+    console.log('Email validado')
+    const emailExists = await fetcher(`/api/users?email=${email}`)
+      .catch(() => false)
+      .then((res: UserResponseBody) => res.status === 'success' && !!res.data.user)
 
-      if (emailExists) {
-        setUserStatus('registered')
-        dispatch(setRegisteredEmail(email))
-      } else {
-        setUserStatus('free')
-      }
-    }, 1000)
+    if (emailExists) {
+      setUserStatus('registered')
+      dispatch(setRegisteredEmail(email))
+    } else {
+      setUserStatus('free')
+    }
   }
 
   return (
@@ -48,8 +48,9 @@ const RegisterEmailInput: React.FC = () => {
       <CustomTextInput
         name="email"
         label="Correo electrónico"
-        validate={validateEmailExistence}
+        validate={validateEmail}
         onFocus={() => {
+          setRegisteredEmail('')
           setUserStatus('noChecked')
         }}
         InputProps={{

@@ -1,7 +1,7 @@
 import { Db, MongoClient } from 'mongodb'
-import { User } from 'passport'
+import { User } from 'storage/types'
+import { RequestUser } from './pages/api/users'
 import { ResponseBody } from './utils/types'
-import { RequestUser } from './utils/passport'
 
 declare module 'http' {
   interface IncomingMessage {

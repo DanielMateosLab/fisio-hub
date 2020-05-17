@@ -1,18 +1,32 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Professional } from 'storage/types'
-import { FieldError } from './errors'
 
-type NextHandler = (err?: any) => void
-export interface Middleware {
-  (req: NextApiRequest, res: NextApiResponse, next: NextHandler): void
+interface SuccessResponse<T> {
+  status: 'success'
+  data: T
+}
+interface FailResponse {
+  status: 'fail'
+  data: {
+    [key: string]: string
+  }
+}
+interface ErrorResponse {
+  status: 'error'
+  message: string
+}
+type NextFunction = (err?: any) => void
+
+export type ResponseBody<T = { [key: string]: {} }> = SuccessResponse<T> | FailResponse | ErrorResponse
+
+export interface RequestHandler<T = { [key: string]: {} }> {
+  (req: NextApiRequest, res: NextApiResponse<ResponseBody<T>>, next: NextFunction ): void
 }
 
-export interface ResponseBody {
-  professional?: Omit<Professional, 'password'>
-  message?: String
-  errors?: FieldError[]
+export interface HandleResult<T = { [key: string]: any }> {
+  (data: T): void
 }
 
-export interface HandleResult {
-  (resBody: ResponseBody): void
+export interface RequestEndpoint {
+  path: string
+  method?: 'POST' | 'PUT'
 }
