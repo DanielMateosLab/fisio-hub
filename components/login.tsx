@@ -24,7 +24,7 @@ const Login = ({ email } : Props) => {
       validationSchema={loginValidationSchema}
       submitButtonText="Iniciar sesión"
       requestEndpoint={{ path: "/api/login" }}
-      handleResult={((data: UserResponseData) => {
+      onSuccess={((data: UserResponseData) => {
         dispatch(setUser(data.user!))
       })}
     >

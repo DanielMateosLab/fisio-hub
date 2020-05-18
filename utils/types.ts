@@ -23,7 +23,7 @@ export interface RequestHandler {
   (req: NextApiRequest, res: NextApiResponse<ResponseBody>, next: NextFunction ): void
 }
 
-export interface HandleResult {
+export interface OnSuccess {
   (data: SuccessResponse['data']): void
 }
 

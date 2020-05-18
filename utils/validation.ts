@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import fetcher from './fetcher'
+import { fetcher } from './fetcher'
 import { SuccessResponse } from './types'
 
 const standardString = Yup.string()

@@ -1,50 +1,28 @@
-import { FormikHelpers } from 'formik'
-import { HandleResult, RequestEndpoint, ResponseBody } from './types'
+import { FormikHelpers, FormikValues } from 'formik'
+import { OnSuccess, RequestEndpoint } from './types'
+import { fetchPostOrPut } from './fetcher'
+import setFormErrors from './setFormErrors'
 
-export default async <T>(
-  values: T,
-  { setSubmitting, setFieldError }: FormikHelpers<T>,
+export default async(
+  values: FormikValues,
+  { setSubmitting, setFieldError }: FormikHelpers<any>,
   requestEndpoint: RequestEndpoint,
-  handleResult: HandleResult
+  onSuccess: OnSuccess
 ) => {
   try {
-    const res = await fetch(requestEndpoint.path, {
-      method: requestEndpoint.method || 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(values)
-    }).catch(() => setFieldError(
-      'submit',
-      'Error conectando al servidor. Comprueba tu conexión y vuelve a intentarlo.')
-    )
+    const resBody = await fetchPostOrPut(requestEndpoint.path, values, 'POST')
 
-    if (!res) return setSubmitting(false)
-
-    const unknownErrorMessage = `
-      Ha ocurrido un error desconocido, vuelve a intentarlo más tarde.
-      Si el error persiste contacta con los administradores y facilítales esta información: 
-      ${res.status} ${res.statusText}
-    `
-
-    const body = await res.json()
-      .catch(() => setFieldError('submit', unknownErrorMessage)) as ResponseBody
-
-    if (!body) return
-
-    if (body.status === 'fail') {
-      const errors = Object.keys(body.data)
-      if (!errors.length) return setFieldError('submit', unknownErrorMessage)
-
-      return errors.forEach(field => setFieldError(field, body.data[field]))
+    if (resBody.status !== 'success') {
+      setFormErrors(resBody, setFieldError)
+    } else {
+      onSuccess(resBody.data)
     }
-
-    if (body.status === 'error') return setFieldError('submit', body.message)
-
-    handleResult(body.data)
   } catch (e) {
-    setFieldError('submit', `Ha ocurrido un error desconocido, vuelve a intentarlo más tarde.
-     Si el error persiste contacta con los administradores`)
+    setFieldError(
+      'submit',
+      `Ha ocurrido un error desconocido, vuelve a intentarlo más tarde.
+      Si el error persiste contacta con los administradores`
+    )
   } finally {
     setSubmitting(false)
   }

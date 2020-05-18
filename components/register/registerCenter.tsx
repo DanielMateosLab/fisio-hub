@@ -19,12 +19,11 @@ const RegisterCenter = () => {
       validationSchema={centerValidationSchema}
       submitButtonText="Finalizar"
       requestEndpoint={{ path: "/api/centers" }}
-      handleResult={(() => {
+      onSuccess={(() => {
         return true
       })}
     >
       <Typography variant="h6" > {email} </Typography>
-      {/* Prepopulate name and first name with the first role values? */}
       <CustomTextInput name="firstName" label="Nombre"/>
       <CustomTextInput name="lastName" label="Apellidos"/>
       <CustomTextInput name="centerName" label="El nombre de tu centro o servicio"/>
