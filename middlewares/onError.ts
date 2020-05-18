@@ -7,10 +7,10 @@ export const defaultErrorMessage = 'Ha ocurrido un error desconocido en el servi
 
 export default (e: any, req: NextApiRequest, res: NextApiResponse<ResponseBody>) => {
   if (e.name == 'ValidationError') {
-    const { inner, path, message } = e as ValidationError
     let data = {} as { [key: string]: string }
+    const { inner, path, message } = e as ValidationError
 
-    if (!inner.length) {
+    if (!inner || !inner.length) {
       data[path] = message
     } else {
       inner.forEach(
