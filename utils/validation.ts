@@ -1,4 +1,6 @@
 import * as Yup from 'yup'
+import fetcher from './fetcher'
+import { SuccessResponse } from './types'
 
 export const centerValidationSchema = Yup.object({
   firstName: Yup.string()
@@ -18,7 +20,14 @@ export const centerValidationSchema = Yup.object({
 export const userValidationSchema = Yup.object({
   email: Yup.string()
     .email('La dirección de correo electrónico no es válida')
-    .required('Campo obligatorio'),
+    .required('Campo obligatorio')
+    .test('usedEmail', 'El email está registrado', async function(value) {
+      const emailExists = await fetcher(`/api/users?email=${value}`)
+        .catch(() => true)
+        .then((res: SuccessResponse) => !!res.data.user?.email)
+      return !emailExists
+    })
+  ,
   password: Yup.string()
     .min(5, 'La contraseña debe tener 5 o más caracteres')
     .max(55, 'La contraseña debe tener 55 o menos caracteres')
@@ -26,11 +35,10 @@ export const userValidationSchema = Yup.object({
   repeatPassword: Yup.string()
     .required('Campo obligatorio')
     .test(
-      'match-passwords',
+      'matchPasswords',
       'Las contraseñas deben coincidir',
       function(value) {
-        if (value === this.parent.password) return value
-        throw Error()
+        return value === this.parent.password
       }
     )
 })

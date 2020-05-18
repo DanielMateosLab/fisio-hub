@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button'
 
 interface FormFooterProps {
   submitError: string
-  isSubmitting: boolean
+  isSubmitting?: boolean
   submitButtonText: string
   disabled?: boolean
 }
