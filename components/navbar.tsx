@@ -1,10 +1,12 @@
 import React from 'react'
-import { useUser } from '../utils/hooks'
 import AppBar from '@material-ui/core/AppBar'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Toolbar from '@material-ui/core/Toolbar'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../redux/rootReducer'
+import { logOut } from 'features/user/userSlice'
 
 const useStyles = makeStyles({
   main: {
@@ -14,14 +16,16 @@ const useStyles = makeStyles({
 })
 
 const Navbar = () => {
-  const { user, mutate } = useUser()
+  const { user } = useSelector((state: RootState) => state.user)
+  const dispatch = useDispatch()
+
   const { main } = useStyles()
 
   const handleLogout = async () => {
     await fetch('/api/login', {
       method: 'DELETE'
     })
-    mutate(null)
+    dispatch(logOut())
   }
 
   return (

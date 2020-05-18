@@ -27,8 +27,8 @@ const userSlice = createSlice({
     setCenter(state, action: PayloadAction<Center>) {
       state.center = action.payload
     },
-    logOut(state) { // This should be a thunk
-      state = initialState
+    logOut() { // This should be a thunk
+      return { ...initialState }
     }
   }
 })
