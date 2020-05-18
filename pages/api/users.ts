@@ -4,7 +4,7 @@ import extractUser from '../../utils/extractUser'
 import onError from '../../middlewares/onError'
 import { users } from '../../middlewares/collections'
 import UsersDAO from '../../storage/usersDAO'
-import { userValidationSchema } from '../../utils/validation'
+import { userServerValidationSchema } from '../../utils/validation'
 import { RequestHandler, WithoutPassword } from '../../utils/types'
 import { Professional, User } from '../../storage/types'
 import * as Yup from 'yup'
@@ -36,7 +36,7 @@ export const getHandler: RequestHandler = async (req, res, next) => {
 
 export const postHandler: RequestHandler = async (req, res, next) => {
   try {
-    const validUser = await userValidationSchema.validate(req.body, { abortEarly: false })
+    const validUser = await userServerValidationSchema.validate(req.body, { abortEarly: false })
     delete validUser.repeatPassword
 
     const user = await UsersDAO.addUser(validUser)

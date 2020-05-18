@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Form, Formik, FormikValues } from 'formik'
 import handleSubmit from '../../utils/handleSubmit'
 import Grid from '@material-ui/core/Grid'
 import FormFooter from './formFooter'
-import { InferType } from 'prop-types'
 import { HandleResult, RequestEndpoint } from '../../utils/types'
+import { ObjectSchema } from 'yup'
 
 
 interface CustomFormProps<T extends FormikValues = FormikValues> {
   initialValues: T
-  validationSchema: InferType<T>
-  /** The path where a POST request is made when submitting the form. Via {@link handleSubmit} */
+  validationSchema: ObjectSchema<T>
   requestEndpoint: RequestEndpoint
   handleResult: HandleResult
   submitButtonText: string
-  submitButtonDisabled?: boolean
   validateOnBlur?: boolean
   validateOnChange?: boolean
 }
@@ -24,37 +22,25 @@ interface CustomFormProps<T extends FormikValues = FormikValues> {
  * - Puts the children inside a center justified Grid container.
  * - Appends {@link FormFooter} to the end - A MaterialUI button with submission errors above.
  * - Encapsulates submission logic and error handling with {@link handleSubmit} util. */
-const CustomForm: React.FC<CustomFormProps> = (
-  { initialValues,
-    validationSchema,
-    requestEndpoint,
-    handleResult,
-    submitButtonText,
-    children,
-    submitButtonDisabled,
-    ...optionalProps
-  }) => {
-  let [ submitError, setSubmitError ] = useState('')
-
+const CustomForm: React.FC<CustomFormProps> = (props) => {
   return (
     <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      validateOnBlur={optionalProps.validateOnBlur}
-      validateOnChange={optionalProps.validateOnChange}
+      initialValues={props.initialValues}
+      validationSchema={props.validationSchema}
+      validateOnBlur={props.validateOnBlur}
+      validateOnChange={props.validateOnChange}
       onSubmit={async (values, formikHelpers ) => {
-        await handleSubmit(values, formikHelpers, setSubmitError, requestEndpoint, handleResult)
+        await handleSubmit(values, formikHelpers, props.requestEndpoint, props.handleResult)
       }}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, errors, isValid }) => (
         <Form>
           <Grid container justify="center">
-            { children }
+            { props.children }
             <FormFooter
-              submitButtonText={submitButtonText}
-              submitError={submitError}
-              isSubmitting={isSubmitting}
-              disabled={submitButtonDisabled}
+              submitButtonText={props.submitButtonText}
+              submitError={errors.submit as any}
+              disabled={isSubmitting || !isValid}
             />
           </Grid>
         </Form>

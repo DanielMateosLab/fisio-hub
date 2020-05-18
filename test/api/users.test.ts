@@ -1,6 +1,6 @@
 // @ts-noCheck
 import { postHandler } from '../../pages/api/users'
-import { userValidationSchema } from '../../utils/validation'
+import { userClientValidationSchema } from '../../utils/validation'
 import UsersDAO from '../../storage/usersDAO'
 import { mockUser } from '../testUtils'
 
@@ -9,7 +9,7 @@ jest.mock('../../storage/usersDAO')
 
 describe('/api/user', () => {
   describe('POST', () => {
-    userValidationSchema.validate.mockImplementation(user => user)
+    userClientValidationSchema.validate.mockImplementation(user => user)
     UsersDAO.addUser.mockImplementation(user => user)
 
     it('should call req.logIn() and res.status().json()', async() => {

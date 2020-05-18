@@ -1,6 +1,6 @@
-import { userValidationSchema } from '../../utils/validation'
+import { userClientValidationSchema } from '../../utils/validation'
 import CustomTextInput from '../formUtils/customTextInput'
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch } from 'react-redux'
 import { setUser } from 'features/user/userSlice'
 import { UserResponseData } from '../../pages/api/users'
@@ -15,7 +15,6 @@ import EmailAdornment from './emailAdornment'
 
 const RegisterUser = () => {
   const dispatch = useDispatch()
-  let [ submitError, setSubmitError ] = useState('')
 
   return (
     <div>
@@ -25,21 +24,19 @@ const RegisterUser = () => {
           password: '',
           repeatPassword: ''
         }}
-        validationSchema={userValidationSchema}
-        validateOnChange={false}
+        validationSchema={userClientValidationSchema}
         onSubmit={async (values, formikHelpers ) => {
           await handleSubmit(
             values,
             formikHelpers,
-            setSubmitError,
             { path: "/api/users" },
             ({ user }: UserResponseData) => {
             dispatch(setUser(user!))
           })
         }}
       >
-        {({ isSubmitting, isValid, errors }) => {
-          const registeredEmail = errors.email === 'El email está registrado'
+        {({ isSubmitting, isValid, errors, values }) => {
+          const registeredEmail = !isValid && (errors.email === 'Ya hay un usuario con este correo electrónico')
 
           return (
             <Form>
@@ -54,7 +51,7 @@ const RegisterUser = () => {
 
                 <Collapse in={registeredEmail}>
                   <UsedEmailWarning>
-                    <SetMethodLink text="Inicia sesión" method="login"/>
+                    <SetMethodLink text="Inicia sesión" method="login" registeredEmail={values.email} />
                   </UsedEmailWarning>
                 </Collapse>
 
@@ -74,8 +71,9 @@ const RegisterUser = () => {
 
                 <FormFooter
                   submitButtonText={'Registrarme'}
-                  submitError={submitError}
-                  disabled={!isValid || isSubmitting}
+                  // @ts-ignore
+                  submitError={errors.submit}
+                  disabled={registeredEmail || isSubmitting}
                 />
               </Grid>
             </Form>

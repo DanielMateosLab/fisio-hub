@@ -23,10 +23,7 @@ const AuthenticateUser: React.FC = () => {
   const LoginUser = () => {
     return (
       <>
-        <Login
-          email={registeredEmail}
-          avoidRoleSelection
-        />
+        <Login avoidRoleSelection email={registeredEmail} />
         <Typography align="center" className={marginTop}>
           ¿Has cambiado de idea?
           <SetMethodLink
