@@ -1,13 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface RegisterState {
-  step: number
   method: 'login' | 'register'
   registeredEmail: string
 }
 
 const initialState: RegisterState = {
-  step: 0,
   method: 'register',
   registeredEmail: ''
 }
@@ -16,9 +14,6 @@ const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
-    setStep(state, action: PayloadAction<number>) {
-      state.step = action.payload
-    },
     setMethod(state, action: PayloadAction<RegisterState['method']>) {
       state.method = action.payload
     },
@@ -28,7 +23,7 @@ const registerSlice = createSlice({
   }
 })
 
-export const { setRegisteredEmail, setMethod, setStep } = registerSlice.actions
+export const { setRegisteredEmail, setMethod } = registerSlice.actions
 const registerReducer = registerSlice.reducer
 
 export default registerReducer

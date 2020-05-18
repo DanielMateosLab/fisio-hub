@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Center, Professional, User } from '../../storage/types'
+import { RequestUser } from '../../pages/api/users'
+import { WithoutPassword } from '../../utils/types'
 
 interface UserState {
   user?: User
@@ -17,19 +19,21 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<User>) {
-      state.user = action.payload
-    },
-    setProfessional(state, action: PayloadAction<Professional>) {
-      state.professional = action.payload
+    setUser(state, action: PayloadAction<WithoutPassword<RequestUser>>) {
+      const { professional, ...user } = action.payload
+      state.user = user
+      state.professional = professional
     },
     setCenter(state, action: PayloadAction<Center>) {
       state.center = action.payload
+    },
+    logOut(state) { // This should be a thunk
+      state = initialState
     }
   }
 })
 
-export const { setUser, setProfessional, setCenter } = userSlice.actions
+export const { setUser, setCenter, logOut } = userSlice.actions
 const userReducer = userSlice.reducer
 
 export default userReducer

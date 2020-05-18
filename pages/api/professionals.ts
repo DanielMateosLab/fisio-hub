@@ -1,5 +1,5 @@
 import ProfessionalsDAO from "../../storage/professionalsDAO";
-import { registerValidationSchema } from '../../utils/validation'
+import { centerValidationSchema } from '../../utils/validation'
 import nextConnect from 'next-connect'
 import middleware from '../../middlewares/middleware'
 import { centers, professionals, users } from '../../middlewares/collections'
@@ -12,7 +12,7 @@ handler.use(middleware, professionals, users, centers)
 
 handler.post(async (req, res, next) => {
   try {
-    const validProfessional = await registerValidationSchema.validate(req.body, { abortEarly: false })
+    const validProfessional = await centerValidationSchema.validate(req.body, { abortEarly: false })
     delete validProfessional.repeatPassword
 
     const professional = await ProfessionalsDAO.addProfessional(validProfessional)

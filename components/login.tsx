@@ -3,13 +3,18 @@ import CustomTextInput from './formUtils/customTextInput'
 import CustomForm from './formUtils/customForm'
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
+import { UserResponseData } from '../pages/api/users'
+import { useDispatch } from 'react-redux'
+import { setUser } from 'features/user/userSlice'
 
 interface Props {
   email?: string
-  handleResult: (resBody: any) => void
+  avoidRoleSelection?: boolean
 }
 
-const Login = ({ email, handleResult } : Props) => {
+const Login = ({ email } : Props) => {
+  const dispatch = useDispatch()
+
   return (
     <CustomForm
       initialValues={{
@@ -19,7 +24,9 @@ const Login = ({ email, handleResult } : Props) => {
       validationSchema={loginValidationSchema}
       submitButtonText="Iniciar sesión"
       requestEndpoint={{ path: "/api/login" }}
-      handleResult={handleResult}
+      handleResult={((data: UserResponseData) => {
+        dispatch(setUser(data.user!))
+      })}
     >
       { email
         ? <Typography variant="h6" > {email} </Typography>

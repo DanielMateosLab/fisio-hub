@@ -1,11 +1,12 @@
 import CustomForm from '../formUtils/customForm'
-import { registerValidationSchema } from '../../utils/validation'
+import { userValidationSchema } from '../../utils/validation'
 import CustomTextInput from '../formUtils/customTextInput'
 import React from 'react'
 import RegisterEmailInput from './registerEmailInput'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../redux/rootReducer'
-import { setStep } from 'features/user/registerSlice'
+import { setUser } from 'features/user/userSlice'
+import { UserResponseData } from '../../pages/api/users'
 
 const RegisterUser = () => {
   const dispatch = useDispatch()
@@ -19,12 +20,12 @@ const RegisterUser = () => {
           password: '',
           repeatPassword: ''
         }}
-        validationSchema={registerValidationSchema}
+        validationSchema={userValidationSchema}
         validateOnChange={false}
         submitButtonText="Registrarme"
         requestEndpoint={{ path: "/api/users" }}
-        handleResult={() => {
-          dispatch(setStep(1))
+        handleResult={({ user }: UserResponseData) => {
+          dispatch(setUser(user!))
         }}
         submitButtonDisabled={!!registeredEmail}
       >

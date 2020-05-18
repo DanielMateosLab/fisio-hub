@@ -1,5 +1,5 @@
 import CustomForm from '../formUtils/customForm'
-import { registerValidationSchema } from '../../utils/validation'
+import { centerValidationSchema } from '../../utils/validation'
 import CustomTextInput from '../formUtils/customTextInput'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -16,7 +16,7 @@ const RegisterCenter = () => {
         lastName: '',
         centerName: '',
       }}
-      validationSchema={registerValidationSchema}
+      validationSchema={centerValidationSchema}
       submitButtonText="Finalizar"
       requestEndpoint={{ path: "/api/centers" }}
       handleResult={(() => {

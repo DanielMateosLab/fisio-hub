@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 
-export const registerValidationSchema = Yup.object({
+export const centerValidationSchema = Yup.object({
   firstName: Yup.string()
     .min(3, 'El nombre debe tener 3 o más carácteres')
     .max(30, 'El nombre debe tener 30 o menos caracteres')
@@ -9,19 +9,10 @@ export const registerValidationSchema = Yup.object({
     .min(3, 'Los apellidos deben tener 3 o más carácteres')
     .max(30, 'Los apellidos deben tener 30 o menos caracteres')
     .required('Campo obligatorio'),
-  email: Yup.string()
-    .email('La dirección de correo electrónico no es válida')
-    .required('Campo obligatorio'),
-  password: Yup.string()
-    .min(5, 'La contraseña debe tener 5 o más caracteres')
-    .max(55, 'La contraseña debe tener 55 o menos caracteres')
-    .required('Campo obligatorio'),
-  repeatPassword: Yup.string()
+  centerName: Yup.string()
+    .min(3, 'Debe tener 3 o más carácteres')
+    .max(30, 'Debe tener 30 o menos caracteres')
     .required('Campo obligatorio')
-    .test(
-      'match-passwords',
-      'Las contraseñas deben coincidir',
-      function(value) { return value == this.parent.password })
 })
 
 export const userValidationSchema = Yup.object({

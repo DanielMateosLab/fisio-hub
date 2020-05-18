@@ -5,16 +5,14 @@ import onError from '../../middlewares/onError'
 import { users } from '../../middlewares/collections'
 import UsersDAO from '../../storage/usersDAO'
 import { userValidationSchema } from '../../utils/validation'
-import { RequestHandler, ResponseBody } from '../../utils/types'
+import { RequestHandler, WithoutPassword } from '../../utils/types'
 import { Professional, User } from '../../storage/types'
 import * as Yup from 'yup'
 
 export type RequestUser = User & { professional?: Professional }
-export type UserResponseData = { user: Omit<RequestUser, 'password'> | boolean }
-export type UserResponseBody = ResponseBody<UserResponseData>
-type UserRequestHandler = RequestHandler<UserResponseBody>
+export type UserResponseData = { user: (WithoutPassword<RequestUser> | null) }
 
-export const getHandler: UserRequestHandler = async (req, res, next) => {
+export const getHandler: RequestHandler = async (req, res, next) => {
   try {
     const { email, authenticated } = req.query
 
@@ -25,7 +23,7 @@ export const getHandler: UserRequestHandler = async (req, res, next) => {
         .catch(e => res.status(400).json({ status: 'fail', data: { email: e.message } }))
 
       const user = validEmail && await UsersDAO.getUserByEmail(validEmail)
-      return res.json({ status: 'success', data: { user: !!user } })
+      return res.json({ status: 'success', data: { user: user ? { email: user.email } : null } })
     }
 
     if (authenticated) {
@@ -36,7 +34,7 @@ export const getHandler: UserRequestHandler = async (req, res, next) => {
   }
 }
 
-export const postHandler: UserRequestHandler = async (req, res, next) => {
+export const postHandler: RequestHandler = async (req, res, next) => {
   try {
     const validUser = await userValidationSchema.validate(req.body, { abortEarly: false })
     delete validUser.repeatPassword

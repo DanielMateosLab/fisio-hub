@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { UserResponseData } from '../pages/api/users'
 
-interface SuccessResponse<T> {
+export interface SuccessResponse {
   status: 'success'
-  data: T
+  data: UserResponseData
 }
 interface FailResponse {
   status: 'fail'
@@ -16,17 +17,19 @@ interface ErrorResponse {
 }
 type NextFunction = (err?: any) => void
 
-export type ResponseBody<T = { [key: string]: {} }> = SuccessResponse<T> | FailResponse | ErrorResponse
+export type ResponseBody = SuccessResponse | FailResponse | ErrorResponse
 
-export interface RequestHandler<T = { [key: string]: {} }> {
-  (req: NextApiRequest, res: NextApiResponse<ResponseBody<T>>, next: NextFunction ): void
+export interface RequestHandler {
+  (req: NextApiRequest, res: NextApiResponse<ResponseBody>, next: NextFunction ): void
 }
 
-export interface HandleResult<T = { [key: string]: any }> {
-  (data: T): void
+export interface HandleResult {
+  (data: SuccessResponse['data']): void
 }
 
 export interface RequestEndpoint {
   path: string
   method?: 'POST' | 'PUT'
 }
+
+export type WithoutPassword<T> = Omit<T, 'password'>

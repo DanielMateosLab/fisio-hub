@@ -10,7 +10,10 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../redux/rootReducer'
 
 const Register = () => {
-  const { step } = useSelector((state: RootState) => state.register)
+  const { user } = useSelector((state: RootState) => state.user)
+  // Take the professional, if professional, navigate to /user
+
+  const step = user ? 1 : 0
   const steps = ['Tus datos de acceso', 'Algunos detalles más...']
 
   function getStepContent(step: number) {

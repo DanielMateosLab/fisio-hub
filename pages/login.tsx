@@ -10,7 +10,7 @@ export default () => {
       <Typography variant="h4" align="center" gutterBottom>
         Inicia sesión
       </Typography>
-      <Login handleResult={() => {}} />
+      <Login />
       <SwitchAuthFooter auxiliaryText="¿No tienes cuenta? " linkText="Regístrate" href="/register" />
     </Container>
   )
