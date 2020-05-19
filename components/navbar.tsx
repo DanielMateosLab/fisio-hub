@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 })
 
 const Navbar = () => {
-  const { user } = useSelector((state: RootState) => state.user)
+  const { user, center } = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch()
 
   const { main } = useStyles()
@@ -31,7 +31,7 @@ const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6">FisioHub</Typography>
+        <Typography variant="h6"> { center && center.name || 'FisioHub' } </Typography>
         <div className={main} />
         { user && <Button onClick={handleLogout} variant="text" color="inherit">Cerrar sesión</Button>}
       </Toolbar>

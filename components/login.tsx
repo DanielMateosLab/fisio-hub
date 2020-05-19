@@ -4,7 +4,7 @@ import CustomForm from './formUtils/customForm'
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 import { useDispatch } from 'react-redux'
-import { setProfessional, setUser } from 'features/user/userSlice'
+import { logIn } from 'features/user/userSlice'
 
 interface Props {
   email?: string
@@ -23,9 +23,8 @@ const Login = ({ email, avoidRoleSelection } : Props) => {
       validationSchema={loginValidationSchema}
       submitButtonText="Iniciar sesión"
       requestEndpoint={{ path: `/api/login${ avoidRoleSelection ? '?avoidRoleSelection=1' : '' }` }}
-      onSuccess={(({ user, professional }) => {
-        dispatch(setUser(user!))
-        professional && dispatch(setProfessional(professional))
+      onSuccess={((data) => {
+        dispatch(logIn(data))
       })}
     >
       { email

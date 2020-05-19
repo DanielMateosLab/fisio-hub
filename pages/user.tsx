@@ -1,19 +1,24 @@
-import React from 'react'
-import { useUser } from '../utils/hooks'
+import React, { useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
-import useEnsureAuthenticated from '../utils/useEnsureAuthenticated'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/rootReducer'
+import { useRouter } from 'next/router'
 
 const User = () => {
-  const { user } = useUser()
-  useEnsureAuthenticated()
+  const { professional } = useSelector((state: RootState) => state.user)
+  const router = useRouter()
 
-  if (!user) return null
+  useEffect(() => {
+    !professional && router.push('/login')
+  }, [professional])
+
+  if (!professional) return null
 
   return (
     <>
-      <Typography variant="h4" gutterBottom>{ user.firstName } { user.lastName }</Typography>
+      <Typography variant="h4" gutterBottom>{ professional.firstName } { professional.lastName }</Typography>
       <Typography variant="body1">
-        Dirección de correo electrónico: { user.email }
+        Dirección de correo electrónico: { professional.email }
       </Typography>
     </>
   )

@@ -18,6 +18,11 @@ export default class CentersDAO {
     return await centers.findOne({ _id })
   }
 
+  static async getCenterByIdAndFilterClientData(_id: string) {
+    return await centers.findOne({ _id })
+      .then(center => center ? { name: center.name } : null)
+  }
+
   static async createCenter(center: Center, professional: Omit<Professional, 'center_id'>) {
     const _id = center.name + await centers.find({ name: center.name }).count() as any
     const insertedCenter = await centers.insertOne({ ...center, _id }).then(writeOpResult => writeOpResult.ops[0])

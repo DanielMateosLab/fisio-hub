@@ -1,6 +1,5 @@
 import nextConnect from "next-connect"
 import onError from 'middlewares/onError'
-import { centers } from '../../middlewares/collections'
 import { NextApiResponse } from 'next'
 import { ResponseBody } from '../../utils/types'
 import { UnauthorizedError } from '../../utils/errors'
@@ -10,7 +9,7 @@ import middleware from '../../middlewares/middleware'
 
 const handler = nextConnect({ onError })
 
-handler.use(middleware, centers)
+handler.use(middleware)
 
 handler.post(async (req, res: NextApiResponse<ResponseBody>, next) => {
   try {

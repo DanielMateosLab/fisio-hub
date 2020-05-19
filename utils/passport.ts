@@ -4,12 +4,14 @@ import bcrypt from 'bcryptjs'
 import { NextApiRequest } from 'next'
 import { LoginError, NotFoundError } from './errors'
 import UsersDAO from '../storage/usersDAO'
-import { Professional, Role, User } from '../storage/types'
+import { Center, Professional, Role, User } from '../storage/types'
 import ProfessionalsDAO from '../storage/professionalsDAO'
+import CentersDAO from '../storage/centersDAO'
 
 export interface AuthData {
   user: User
   professional?: Professional
+  center?: Pick<Center, 'name'>
 }
 interface SessionData {
   email: string
@@ -23,12 +25,20 @@ passport.serializeUser<AuthData, SessionData>((authData, done) => {
 passport.deserializeUser<AuthData, SessionData, NextApiRequest>
 (async (req, sessionData, done) => {
   const user = await UsersDAO.getUserByEmail(sessionData.email)
+
   const professional = sessionData.center_id && await ProfessionalsDAO
     .getProfessionalByCenterIdAndEmail(sessionData.center_id, sessionData.email)
 
-  user
-    ? done(null, { user, professional: professional || undefined })
-    : done(new LoginError())
+  const center = professional && await CentersDAO.getCenterByIdAndFilterClientData(professional.center_id)
+
+  if (user) return done(null, {
+    user,
+    professional: professional || undefined,
+    center: center || undefined
+  })
+
+
+  done(new LoginError())
 })
 
 passport.use(new LocalStrategy(
@@ -44,19 +54,22 @@ passport.use(new LocalStrategy(
 
       if (req.body.center_id) {
         const professional = await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(req.body.center_id, user.email)
+        const center = professional && await CentersDAO.getCenterByIdAndFilterClientData(professional.center_id)
 
         return professional
-          ? done(null, { user, professional })
+          ? done(null, { user, professional, center: center || undefined })
           : done(new NotFoundError('El profesional seleccionado no existe.'))
       }
 
       // Professional is auto-selected when possible
       const center_id = getCenterIdIfSingleProfessional(user.roles)
       const professional = center_id && await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(center_id, user.email)
+      const center = center_id && await CentersDAO.getCenterByIdAndFilterClientData(center_id)
 
       return done(null, {
         user,
-        professional: professional || undefined
+        professional: professional || undefined,
+        center: center || undefined
       })
     } catch (e) {
       return done(new LoginError())

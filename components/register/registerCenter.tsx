@@ -5,7 +5,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../redux/rootReducer'
 import Typography from '@material-ui/core/Typography'
-import { setCenter, setProfessional } from 'features/user/userSlice'
+import { logIn } from 'features/user/userSlice'
 
 
 const RegisterCenter = () => {
@@ -23,8 +23,7 @@ const RegisterCenter = () => {
       submitButtonText="Finalizar"
       requestEndpoint={{ path: "/api/centers" }}
       onSuccess={((data) => {
-        dispatch(setProfessional(data.professional!))
-        dispatch(setCenter(data.center!))
+        dispatch(logIn(data))
       })}
     >
       <Typography variant="h6" > {email} </Typography>

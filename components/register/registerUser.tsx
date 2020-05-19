@@ -2,7 +2,7 @@ import { userClientValidationSchema } from '../../utils/validation'
 import CustomTextInput from '../formUtils/customTextInput'
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { setUser } from 'features/user/userSlice'
+import { logIn } from 'features/user/userSlice'
 import { Form, Formik } from 'formik'
 import handleSubmit from '../../utils/handleSubmit'
 import Grid from '@material-ui/core/Grid'
@@ -30,7 +30,7 @@ const RegisterUser = () => {
             formikHelpers,
             { path: "/api/users" },
             ({ user }) => {
-            dispatch(setUser(user!))
+            dispatch(logIn({ user }))
           })
         }}
       >
