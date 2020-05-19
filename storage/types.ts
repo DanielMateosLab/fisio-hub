@@ -1,14 +1,18 @@
 import { ObjectId } from 'bson'
 
+
 export interface Center {
+  /** The center_id is a custom-generated id suitable to be a shard key */
   _id?: string
   name: string
 }
 
 export interface Role {
   role: 'professional' | 'patient'
-  role_id: ObjectId // This is important for patients identification, as email is not unique
-  center_id: string // It will be the shard key (hashed) for the main collections
+  // This is important for patients identification, as email is not unique
+  role_id: ObjectId
+  /** The center_id is a custom-generated id suitable to be a shard key */
+  center_id: string
 }
 
 export interface User {

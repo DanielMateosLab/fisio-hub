@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import { Professional } from '../storage/types'
 import Router from 'next/router'
-import fetcher from './fetcher'
+import { fetcher } from './fetcher'
 
 export function useUser() {
   const { data, mutate } = useSWR('/api/user', fetcher, {

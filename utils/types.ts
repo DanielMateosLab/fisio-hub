@@ -1,9 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { UserResponseData } from '../pages/api/users'
+import { ProfessionalsResponseData } from '../pages/api/professionals'
 
-export interface SuccessResponse {
+type DefaultSuccessResBody = Partial<UserResponseData & ProfessionalsResponseData>
+
+export interface SuccessResponse<T = DefaultSuccessResBody> {
   status: 'success'
-  data: UserResponseData
+  data: T
 }
 interface FailResponse {
   status: 'fail'
@@ -17,10 +20,10 @@ interface ErrorResponse {
 }
 type NextFunction = (err?: any) => void
 
-export type ResponseBody = SuccessResponse | FailResponse | ErrorResponse
+export type ResponseBody<T = DefaultSuccessResBody> = SuccessResponse<T> | FailResponse | ErrorResponse
 
-export interface RequestHandler {
-  (req: NextApiRequest, res: NextApiResponse<ResponseBody>, next: NextFunction ): void
+export interface RequestHandler<T = DefaultSuccessResBody> {
+  (req: NextApiRequest, res: NextApiResponse<ResponseBody<T>>, next: NextFunction ): void
 }
 
 export interface OnSuccess {

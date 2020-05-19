@@ -1,18 +1,18 @@
 import nextConnect from 'next-connect'
 import middleware from '../../middlewares/middleware'
-import extractUser from '../../utils/extractUser'
 import onError from '../../middlewares/onError'
-import { users } from '../../middlewares/collections'
 import UsersDAO from '../../storage/usersDAO'
 import { userServerValidationSchema } from '../../utils/validation'
-import { RequestHandler, WithoutPassword } from '../../utils/types'
-import { Professional, User } from '../../storage/types'
+import { RequestHandler, ResponseBody, WithoutPassword } from '../../utils/types'
+import { User } from '../../storage/types'
 import * as Yup from 'yup'
+import { NextApiResponse } from 'next'
+import extractAuthData from '../../utils/extractAuthData'
 
-export type RequestUser = User & { professional?: Professional }
-export type UserResponseData = { user: (WithoutPassword<RequestUser> | null) }
+export type UserResponseData = { user: (WithoutPassword<User> | null) }
+type UserResponse = NextApiResponse<ResponseBody<UserResponseData>>
 
-export const getHandler: RequestHandler = async (req, res, next) => {
+export const getHandler: RequestHandler = async (req, res: UserResponse, next) => {
   try {
     const { email, authenticated } = req.query
 
@@ -27,14 +27,14 @@ export const getHandler: RequestHandler = async (req, res, next) => {
     }
 
     if (authenticated) {
-      return res.json({ status: 'success', data: { user: extractUser(req) } })
+      return res.json({ status: 'success', data: extractAuthData(req) })
     }
   } catch (e) {
     next(e)
   }
 }
 
-export const postHandler: RequestHandler = async (req, res, next) => {
+export const postHandler: RequestHandler = async (req, res: UserResponse, next) => {
   try {
     const validUser = await userServerValidationSchema.validate(req.body, { abortEarly: false })
     delete validUser.repeatPassword
@@ -43,7 +43,7 @@ export const postHandler: RequestHandler = async (req, res, next) => {
 
     req.logIn(user, err => err && next(err))
 
-    res.status(201).json({ status: 'success', data: { user: extractUser(req) }})
+    res.status(201).json({ status: 'success', data: extractAuthData(req)})
   } catch (e) {
     next(e)
   }
@@ -52,7 +52,7 @@ export const postHandler: RequestHandler = async (req, res, next) => {
 const handler = nextConnect({ onError })
 
 handler
-  .use(middleware, users)
+  .use(middleware)
   .get(getHandler)
   .post(postHandler)
 

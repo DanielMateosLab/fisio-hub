@@ -1,14 +1,17 @@
 import { Db, MongoClient } from 'mongodb'
 import { User } from 'storage/types'
-import { RequestUser } from './pages/api/users'
 import { ResponseBody } from './utils/types'
+import { AuthData } from './utils/passport'
+
 
 declare module 'http' {
   interface IncomingMessage {
     db: Db
     dbClient: MongoClient
 
-    user: RequestUser
+    session: any
+
+    user: AuthData
 
     logIn(user: User, done: (err: any) => void): void
     logIn(user: User, options: any, done: (err: any) => void): void

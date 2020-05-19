@@ -2,66 +2,76 @@ import passport from 'passport'
 import { Strategy as LocalStrategy } from 'passport-local'
 import bcrypt from 'bcryptjs'
 import { NextApiRequest } from 'next'
-import { LoginError } from './errors'
+import { LoginError, NotFoundError } from './errors'
 import UsersDAO from '../storage/usersDAO'
+import { Professional, Role, User } from '../storage/types'
 import ProfessionalsDAO from '../storage/professionalsDAO'
-import { RequestUser } from '../pages/api/users'
 
-interface UserSessionInfo {
+export interface AuthData {
+  user: User
+  professional?: Professional
+}
+interface SessionData {
   email: string
   center_id?: string
 }
 
-passport.serializeUser<RequestUser, UserSessionInfo>((user, done) => {
-  done(null, {
-    email: user.email,
-    center_id: user.professional?.center_id
-    })
+passport.serializeUser<AuthData, SessionData>((authData, done) => {
+  done(null, { email: authData.user.email, center_id: authData.professional?.center_id })
 })
 
-passport.deserializeUser<RequestUser, UserSessionInfo, NextApiRequest>(async (
-  req,
-  { email, center_id },
-  done
-) => {
-  UsersDAO.injectDB(req.db)
-  ProfessionalsDAO.injectDB(req.dbClient)
+passport.deserializeUser<AuthData, SessionData, NextApiRequest>
+(async (req, sessionData, done) => {
+  const user = await UsersDAO.getUserByEmail(sessionData.email)
+  const professional = sessionData.center_id && await ProfessionalsDAO
+    .getProfessionalByCenterIdAndEmail(sessionData.center_id, sessionData.email)
 
-  const user = await UsersDAO.getUserByEmail(email)
-  const professional = user && center_id &&
-    await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(center_id, email)
-
-  user && done(null, {
-    ...user,
-    professional: professional || undefined
-  })
+  user
+    ? done(null, { user, professional: professional || undefined })
+    : done(new LoginError())
 })
 
 passport.use(new LocalStrategy(
   { usernameField: 'email', passReqToCallback: true },
-  async (req, email, password, done: (error: any, user?: RequestUser) => void) => {
+  async (req, email, password, done: (error: any, authData?: AuthData) => void) => {
     try {
-      UsersDAO.injectDB(req.db)
       const user = await UsersDAO.getUserByEmail(email)
       const isValidPassword = user && user.password && await bcrypt.compare(password, user.password)
 
-      if (isValidPassword) {
-        const professionalRoles = user?.roles?.filter(({ role }) => role == 'professional')
-        const uniqueProfessionalRole = professionalRoles && professionalRoles.length == 1 && professionalRoles[0]
-        const professional = uniqueProfessionalRole && await ProfessionalsDAO
-          .getProfessionalByCenterIdAndEmail(uniqueProfessionalRole.center_id, user!.email)
+      if (!user || !isValidPassword) return done(new LoginError())
 
-        user && done(null, {
-          ...user,
-          professional: !req.query.avoidRoleSelection && professional || undefined
-        })
-      } else {
-        done(new LoginError())
+      if (req.query.avoidRoleSelection) return done(null, { user })
+
+      if (req.body.center_id) {
+        const professional = await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(req.body.center_id, user.email)
+
+        return professional
+          ? done(null, { user, professional })
+          : done(new NotFoundError('El profesional seleccionado no existe.'))
       }
+
+      // Professional is auto-selected when possible
+      const center_id = getCenterIdIfSingleProfessional(user.roles)
+      const professional = center_id && await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(center_id, user.email)
+
+      return done(null, {
+        user,
+        professional: professional || undefined
+      })
     } catch (e) {
-      done(new LoginError())
+      return done(new LoginError())
     }
   }
 ))
+
+function getCenterIdIfSingleProfessional(roles?: Role[]) {
+  if (!roles) return null
+
+  const professionalRoles = roles.filter(role => role.role === 'professional')
+
+  return professionalRoles.length === 1
+    ? professionalRoles[0].center_id
+    : null
+}
 
 export default passport

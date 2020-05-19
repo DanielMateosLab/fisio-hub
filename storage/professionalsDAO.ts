@@ -21,8 +21,9 @@ export default class ProfessionalsDAO {
   static async getProfessionalByCenterIdAndEmail(center_id: string, email: string) {
     return await professionals.findOne({ center_id, email })
   }
-  static async getProfessionalByCenterId(center_id: string) {
-    return await professionals.findOne({ center_id })
+
+  static async getProfessionalsByCenterId(center_id: string) {
+    return professionals.find({ center_id })
   }
 
   static async addProfessional(professional: Professional, newCenter = false): Promise<{ success: true }> {

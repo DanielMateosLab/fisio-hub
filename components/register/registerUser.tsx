@@ -3,7 +3,6 @@ import CustomTextInput from '../formUtils/customTextInput'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { setUser } from 'features/user/userSlice'
-import { UserResponseData } from '../../pages/api/users'
 import { Form, Formik } from 'formik'
 import handleSubmit from '../../utils/handleSubmit'
 import Grid from '@material-ui/core/Grid'
@@ -30,7 +29,7 @@ const RegisterUser = () => {
             values,
             formikHelpers,
             { path: "/api/users" },
-            ({ user }: UserResponseData) => {
+            ({ user }) => {
             dispatch(setUser(user!))
           })
         }}
