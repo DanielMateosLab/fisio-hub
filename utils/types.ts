@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { UserResponseData } from '../pages/api/users'
 import { ProfessionalsResponseData } from '../pages/api/professionals'
+import { Center } from '../storage/types'
 
-type DefaultSuccessResBody = Partial<UserResponseData & ProfessionalsResponseData>
+type DefaultSuccessResBody = Partial<UserResponseData & ProfessionalsResponseData & { center: Center }>
 
 export interface SuccessResponse<T = DefaultSuccessResBody> {
   status: 'success'

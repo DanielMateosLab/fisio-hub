@@ -1,10 +1,15 @@
 
-export class LoginError {
+export class UnauthorizedError {
   status = 401
-  message = 'Contraseña o dirección de correo electrónico incorrecta'
-
+  message = 'Es necesario iniciar sesión'
+  
   constructor() {}
 }
+
+export class LoginError extends UnauthorizedError {
+  message = 'Contraseña o dirección de correo electrónico incorrecta'
+}
+
 
 export class NotFoundError {
   status = 404

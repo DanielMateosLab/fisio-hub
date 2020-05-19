@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
 import Stepper from '@material-ui/core/Stepper'
@@ -8,10 +8,15 @@ import RegisterCenter from '../components/register/registerCenter'
 import AuthenticateUser from '../components/register/authenticateUser'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux/rootReducer'
+import { useRouter } from 'next/router'
 
 const Register = () => {
-  const { user } = useSelector((state: RootState) => state.user)
-  // Take the professional, if professional, navigate to /user
+  const { user, professional } = useSelector((state: RootState) => state.user)
+  const router = useRouter()
+
+  useEffect(() => {
+    professional && router.push('/user')
+  }, [professional])
 
   const step = user ? 1 : 0
   const steps = ['Tus datos de acceso', 'Algunos detalles más...']

@@ -11,7 +11,7 @@ export default class CentersDAO {
       return
     }
     client = mongoClient
-    centers = client.db(process.env.DB_NAME).collection('centers')
+    centers = mongoClient.db(process.env.DB_NAME).collection('centers')
   }
 
   static async getCenterById(_id: string) {
@@ -20,9 +20,12 @@ export default class CentersDAO {
 
   static async createCenter(center: Center, professional: Omit<Professional, 'center_id'>) {
     const _id = center.name + await centers.find({ name: center.name }).count() as any
-    const { _id: center_id } = await centers.insertOne({ ...center, _id }).then(writeOpResult => writeOpResult.ops[0])
+    const insertedCenter = await centers.insertOne({ ...center, _id }).then(writeOpResult => writeOpResult.ops[0])
 
     professionalsDAO.injectDB(client)
-    return await professionalsDAO.addProfessional({ ... professional, center_id }, true)
+    const insertedProfessional = await professionalsDAO
+      .addProfessional({ ...professional, center_id: insertedCenter._id as any }, true)
+
+    return { center: insertedCenter, professional: insertedProfessional }
   }
 }

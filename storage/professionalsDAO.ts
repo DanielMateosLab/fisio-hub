@@ -26,7 +26,12 @@ export default class ProfessionalsDAO {
     return professionals.find({ center_id })
   }
 
-  static async addProfessional(professional: Professional, newCenter = false): Promise<{ success: true }> {
+  /**
+   * Creates a professional.
+   * - Looks for a user with the given email, if it does not exist, it creates it.
+   * - Adds the created professional to the user roles.
+   */
+  static async addProfessional(professional: Professional, newCenter = false) {
     const { center_id, email } = professional
     professional._id = new ObjectId()
 
@@ -47,9 +52,11 @@ export default class ProfessionalsDAO {
       // TODO: send password-creation email
     }
 
+    let insertedProfessional: Professional
+
     const session = client.startSession()
     const transactionResult = await session.withTransaction(async () => {
-      await professionals.insertOne(professional, { session }).then(r => r.ops[0])
+      insertedProfessional = await professionals.insertOne(professional, { session }).then(r => r.ops[0])
 
       await users.updateOne(
         { email },
@@ -58,6 +65,9 @@ export default class ProfessionalsDAO {
     }) as any
     session.endSession()
 
-    return transactionResult && { success: true }
+    // The transaction result is not correctly typed.
+    // Also TS is not asserting that insertedProfessional would be initialized at this point.
+    // @ts-ignore
+    return insertedProfessional as Professional
   }
 }

@@ -2,12 +2,15 @@ import CustomForm from '../formUtils/customForm'
 import { centerValidationSchema } from '../../utils/validation'
 import CustomTextInput from '../formUtils/customTextInput'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../redux/rootReducer'
 import Typography from '@material-ui/core/Typography'
+import { setCenter, setProfessional } from 'features/user/userSlice'
+
 
 const RegisterCenter = () => {
   const email = useSelector((state: RootState) => state.user.user?.email)
+  const dispatch = useDispatch()
 
   return (
     <CustomForm
@@ -19,8 +22,9 @@ const RegisterCenter = () => {
       validationSchema={centerValidationSchema}
       submitButtonText="Finalizar"
       requestEndpoint={{ path: "/api/centers" }}
-      onSuccess={(() => {
-        return true
+      onSuccess={((data) => {
+        dispatch(setProfessional(data.professional!))
+        dispatch(setCenter(data.center!))
       })}
     >
       <Typography variant="h6" > {email} </Typography>
