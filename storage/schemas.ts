@@ -111,7 +111,10 @@ const userSchema: BSONSchema = {
                 description: '"role" is required and must be one of the listed options. '
               },
               role_id: _id,
+              firstName,
+              lastName,
               center_id,
+              centerName: { bsonType: 'string' }
             }
           }
         }

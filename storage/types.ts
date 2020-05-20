@@ -10,9 +10,12 @@ export interface Center {
 export interface Role {
   role: 'professional' | 'patient'
   // This is important for patients identification, as email is not unique
-  role_id: ObjectId
+  role_id: ObjectId,
+  firstName: string,
+  lastName: string,
   /** The center_id is a custom-generated id suitable to be a shard key */
-  center_id: string
+  center_id: string,
+  centerName: string
 }
 
 export interface User {
