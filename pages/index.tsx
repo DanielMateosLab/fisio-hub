@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react'
-import { useUser } from '../utils/hooks'
 import Router from 'next/router'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/rootReducer'
 
 const Index = () => {
-  const { user } = useUser()
+  const { user } = useSelector((state: RootState) => state.user)
 
   useEffect(() => {
-    const path = user ? '/user' : '/login'
-    Router.push(path)
+    const redirectPath = user ? '/user' : '/login'
+    Router.push(redirectPath)
   })
 
   return null
