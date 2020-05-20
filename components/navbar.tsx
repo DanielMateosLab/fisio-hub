@@ -22,21 +22,13 @@ const Navbar = () => {
   const { main } = useStyles()
   const { pathname, push } = useRouter()
 
-
-  const handleLogout = async () => {
-    await fetch('/api/login', {
-      method: 'DELETE'
-    })
-    dispatch(logOut())
-  }
-
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6"> { center && center.name || 'FisioHub' } </Typography>
         <div className={main} />
         { user && pathname !== '/register' &&
-          <Button onClick={handleLogout} variant="text" color="inherit">Cerrar sesión</Button>
+          <Button onClick={() => dispatch(logOut())} variant="text" color="inherit">Cerrar sesión</Button>
         }
         { !user && pathname !== '/login' &&
           <Button onClick={() => push('/login')} variant="text" color="inherit">Iniciar sesión</Button>

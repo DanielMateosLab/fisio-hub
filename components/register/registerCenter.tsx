@@ -5,7 +5,8 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../redux/rootReducer'
 import Typography from '@material-ui/core/Typography'
-import { logIn } from 'features/user/userSlice'
+import { logIn, logOut } from 'features/user/userSlice'
+import { setMethod } from 'features/user/registerSlice'
 import Button from '@material-ui/core/Button'
 
 
@@ -13,7 +14,13 @@ const RegisterCenter = () => {
   const email = useSelector((state: RootState) => state.user.user?.email)
   const dispatch = useDispatch()
 
-  const CancelButton = <Button color='default' tabIndex={-1}> Cancelar </Button>
+  const CancelButton = <Button
+    color='default'
+    tabIndex={-1}
+    onClick={() => {
+      dispatch(logOut())
+      dispatch(setMethod('register'))
+    }}> Cancelar </Button>
 
   return (
     <CustomForm

@@ -21,7 +21,7 @@ type LoginResponse = NextApiResponse<ResponseBody<UserResponseData & Professiona
 
 // To avoid roleSelection in passport, call the endpoint with query param avoidRoleSelection=1
 handler
-  .post(passport.authenticate('local'), (req, res: LoginResponse, next) => {
+  .post(passport.authenticate('local'), (req, res: LoginResponse) => {
     res.json({ status: 'success' , data: extractAuthData(req) })
   })
   .put(async (req, res: LoginResponse, next) => {
@@ -36,11 +36,11 @@ handler
 
     res.status(200).json({ status: 'success', data: extractAuthData(req) })
   })
-  .delete((req, res: LoginResponse, next) => {
+  .delete((req, res) => {
     req.logOut()
     req.session.destroy()
 
-    res.status(204).json({ status: 'success', data: { user: null } })
+    res.status(204).end()
   })
 
 export default handler
