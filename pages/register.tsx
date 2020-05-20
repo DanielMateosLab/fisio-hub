@@ -38,7 +38,7 @@ const Register = () => {
         ¡Empieza a usar FisioHub!
       </Typography>
 
-      <Stepper activeStep={step}>
+      <Stepper activeStep={step} orientation="horizontal">
         {steps.map((label) => {
           const stepProps: { completed?: boolean } = {}
           return (

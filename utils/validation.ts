@@ -57,3 +57,8 @@ export const centerValidationSchema = Yup.object({
   lastName: standardString,
   centerName: standardString
 })
+
+export const roleSelectionValidationSchema = Yup.object({
+  center_id: Yup.string().required('Es necesario un center_id'),
+  centerName: Yup.string().required('Es necesario el nombre del centro'),
+})

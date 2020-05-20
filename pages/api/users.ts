@@ -8,6 +8,7 @@ import { User } from '../../storage/types'
 import * as Yup from 'yup'
 import { NextApiResponse } from 'next'
 import extractAuthData from '../../utils/extractAuthData'
+import { ForbiddenError } from '../../utils/errors'
 
 export type UserResponseData = { user: (WithoutPassword<User> | null) }
 type UserResponse = NextApiResponse<ResponseBody<UserResponseData>>
@@ -36,12 +37,14 @@ export const getHandler: RequestHandler = async (req, res: UserResponse, next) =
 
 export const postHandler: RequestHandler = async (req, res: UserResponse, next) => {
   try {
+    if (req.isAuthenticated()) next(new ForbiddenError('Acción denegada. Cierra sesión o borra las cookies'))
+
     const validUser = await userServerValidationSchema.validate(req.body, { abortEarly: false })
     delete validUser.repeatPassword
 
     const user = await UsersDAO.addUser(validUser)
 
-    req.logIn(user, err => err && next(err))
+    req.logIn({ user }, err => err && next(err))
 
     res.status(201).json({ status: 'success', data: extractAuthData(req)})
   } catch (e) {

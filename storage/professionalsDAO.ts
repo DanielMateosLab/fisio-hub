@@ -1,20 +1,17 @@
 import { Collection, MongoClient, ObjectId } from 'mongodb'
 import { FieldValidationError } from '../utils/errors'
-import { Professional, Role, User } from './types'
+import { Center, Professional, Role, User } from './types'
 
 let client: MongoClient
 let professionals: Collection<Professional>
-let users: Collection<User>
 
 export default class ProfessionalsDAO {
   static injectDB(mongoClient: MongoClient): void {
-    if (client && professionals && users) {
+    if (client && professionals) {
       return
     }
-    const db = mongoClient.db(process.env.DB_NAME)
     client = mongoClient
-    professionals = db.collection('professionals')
-    users = db.collection('users')
+    professionals = mongoClient.db(process.env.DB_NAME).collection('professionals')
   }
 
   /** Finds by center_id and email. Index-supported query. */
@@ -32,6 +29,9 @@ export default class ProfessionalsDAO {
    * - Adds the created professional to the user roles.
    */
   static async addProfessional(professional: Professional, newCenter = false) {
+    const centers = client.db(process.env.DB_NAME).collection<Center>('centers')
+    const users = client.db(process.env.DB_NAME).collection<User>('users')
+
     const { center_id, email } = professional
     professional._id = new ObjectId()
 
@@ -43,7 +43,13 @@ export default class ProfessionalsDAO {
     const role: Role = {
       role: 'professional',
       role_id: professional._id,
-      center_id
+      firstName: professional.firstName,
+      lastName: professional.lastName,
+      center_id,
+      centerName: await centers.aggregate([
+        { $match: { _id: center_id } },
+        { $project: { _id: 0, name: 1 } }
+      ]).toArray().then(result => result[0].name)
     }
 
     const user = await users.findOne({ email })

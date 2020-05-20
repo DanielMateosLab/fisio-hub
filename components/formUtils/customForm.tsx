@@ -13,6 +13,7 @@ interface CustomFormProps<T extends FormikValues = FormikValues> {
   requestEndpoint: RequestEndpoint
   onSuccess: OnSuccess
   submitButtonText: string
+  additionalButton?: React.ReactNode
 }
 
 /**
@@ -37,7 +38,9 @@ const CustomForm: React.FC<CustomFormProps> = (props) => {
               submitButtonText={props.submitButtonText}
               submitError={errors.submit as any}
               disabled={isSubmitting || !isValid}
-            />
+            >
+              { props.additionalButton }
+            </FormFooter>
           </Grid>
         </Form>
       )}

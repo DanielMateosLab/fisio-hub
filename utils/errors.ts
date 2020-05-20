@@ -1,3 +1,7 @@
+export class ForbiddenError extends Error {
+  status = 403
+  message = 'No tiene los permisos para realizar esta acción'
+}
 
 export class UnauthorizedError {
   status = 401

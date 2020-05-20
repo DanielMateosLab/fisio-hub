@@ -1,5 +1,4 @@
 import { Db, MongoClient } from 'mongodb'
-import { User } from 'storage/types'
 import { ResponseBody } from './utils/types'
 import { AuthData } from './utils/passport'
 
@@ -12,8 +11,9 @@ declare module 'http' {
 
     user: AuthData
 
-    logIn(user: User, done: (err: any) => void): void
-    logIn(user: User, options: any, done: (err: any) => void): void
+    /** Adds the given info to the req.user (and serializes the user?) */
+    logIn(user: AuthData, done: (err: any) => void): void
+    logIn(user: AuthData, options: any, done: (err: any) => void): void
 
     logOut(): void
 

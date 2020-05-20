@@ -18,27 +18,29 @@ interface SessionData {
   center_id?: string
 }
 
+// This is called with the user passed in logIn or in the auth method callback
 passport.serializeUser<AuthData, SessionData>((authData, done) => {
   done(null, { email: authData.user.email, center_id: authData.professional?.center_id })
 })
 
 passport.deserializeUser<AuthData, SessionData, NextApiRequest>
 (async (req, sessionData, done) => {
-  const user = await UsersDAO.getUserByEmail(sessionData.email)
+  try {
+    const user = await UsersDAO.getUserByEmail(sessionData.email)
 
-  const professional = sessionData.center_id && await ProfessionalsDAO
-    .getProfessionalByCenterIdAndEmail(sessionData.center_id, sessionData.email)
+    const professional = sessionData.center_id && await ProfessionalsDAO
+      .getProfessionalByCenterIdAndEmail(sessionData.center_id, sessionData.email)
 
-  const center = professional && await CentersDAO.getCenterByIdAndFilterClientData(professional.center_id)
+    const center = professional && await CentersDAO.getCenterByIdAndFilterClientData(professional.center_id)
 
-  if (user) return done(null, {
-    user,
-    professional: professional || undefined,
-    center: center || undefined
-  })
-
-
-  done(new LoginError())
+    if (user) return done(null, {
+      user,
+      professional: professional || undefined,
+      center: center || undefined
+    })
+  } catch (e) {
+    return done(new NotFoundError('Borra las cookies del navegador y vuelve a intentarlo'))
+  }
 })
 
 passport.use(new LocalStrategy(
@@ -52,12 +54,13 @@ passport.use(new LocalStrategy(
 
       if (req.query.avoidRoleSelection) return done(null, { user })
 
+      // Return selected professional
       if (req.body.center_id) {
         const professional = await ProfessionalsDAO.getProfessionalByCenterIdAndEmail(req.body.center_id, user.email)
         const center = professional && await CentersDAO.getCenterByIdAndFilterClientData(professional.center_id)
 
-        return professional
-          ? done(null, { user, professional, center: center || undefined })
+        return professional && center
+          ? done(null, { user, professional, center })
           : done(new NotFoundError('El profesional seleccionado no existe.'))
       }
 
@@ -77,12 +80,18 @@ passport.use(new LocalStrategy(
   }
 ))
 
+function filterProfessionalRoles(roles?: Role[]) {
+  if (!roles) return null
+
+  return roles.filter(role => role.role === 'professional')
+}
+
 function getCenterIdIfSingleProfessional(roles?: Role[]) {
   if (!roles) return null
 
-  const professionalRoles = roles.filter(role => role.role === 'professional')
+  const professionalRoles = filterProfessionalRoles(roles)
 
-  return professionalRoles.length === 1
+  return professionalRoles && professionalRoles.length === 1
     ? professionalRoles[0].center_id
     : null
 }

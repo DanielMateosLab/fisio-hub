@@ -6,6 +6,7 @@ import { UnauthorizedError } from '../../utils/errors'
 import { centerValidationSchema } from '../../utils/validation'
 import centersDAO from '../../storage/centersDAO'
 import middleware from '../../middlewares/middleware'
+import extractAuthData from '../../utils/extractAuthData'
 
 const handler = nextConnect({ onError })
 
@@ -23,7 +24,9 @@ handler.post(async (req, res: NextApiResponse<ResponseBody>, next) => {
       { ...professional, email: req.user.user.email, isAdmin: true }
       )
 
-    res.json({ status: 'success', data: result })
+    req.logIn({ ...req.user, ...result }, err => err && next(err))
+
+    res.json({ status: 'success', data: extractAuthData(req) })
   } catch (e) {
     next(e)
   }

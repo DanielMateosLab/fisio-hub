@@ -6,9 +6,17 @@ import Login from '../components/login'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux/rootReducer'
 import { useRouter } from 'next/router'
+import RoleSelection from '../components/roleSelection'
+
+const UserAuthentication = () => (
+  <>
+    <Login />
+    <SwitchAuthFooter auxiliaryText="¿No tienes cuenta? " linkText="Regístrate" href="/register" />
+  </>
+)
 
 export default () => {
-  const { professional } = useSelector((state: RootState) => state.user)
+  const { professional, user } = useSelector((state: RootState) => state.user)
   const router = useRouter()
 
   useEffect(() => {
@@ -20,8 +28,8 @@ export default () => {
       <Typography variant="h4" align="center" gutterBottom>
         Inicia sesión
       </Typography>
-      <Login />
-      <SwitchAuthFooter auxiliaryText="¿No tienes cuenta? " linkText="Regístrate" href="/register" />
+
+      { user ? <RoleSelection /> : <UserAuthentication /> }
     </Container>
   )
 }

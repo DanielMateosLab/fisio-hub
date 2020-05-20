@@ -20,7 +20,7 @@ export default (e: any, req: NextApiRequest, res: NextApiResponse<ResponseBody>)
     res.status(400).json({ status: 'fail', data })
   }
 
-  console.error(e)
+  if (!e.status) console.error(e)
 
   let { status = 500, message, errmsg } = e
   if (!message) {
