@@ -22,7 +22,7 @@ export interface User {
   _id?: ObjectId
   email: string
   password?: string
-  roles?: Role[]
+  roles: Role[]
 }
 
 export interface Professional {

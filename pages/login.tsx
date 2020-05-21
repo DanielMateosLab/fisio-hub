@@ -31,8 +31,8 @@ export default () => {
       <Typography variant="h4" align="center" gutterBottom>
         Inicia sesión
       </Typography>
-
-      { user ? <RoleSelection /> : <UserAuthentication /> }
+      <UserAuthentication />
+      <RoleSelection open={!!user} />
     </Container>
   )
 }
