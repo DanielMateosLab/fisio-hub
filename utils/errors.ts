@@ -3,11 +3,9 @@ export class ForbiddenError extends Error {
   message = 'No tiene los permisos para realizar esta acción'
 }
 
-export class UnauthorizedError {
+export class UnauthorizedError extends Error {
   status = 401
   message = 'Es necesario iniciar sesión'
-  
-  constructor() {}
 }
 
 export class LoginError extends UnauthorizedError {

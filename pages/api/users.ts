@@ -8,7 +8,7 @@ import { User } from '../../storage/types'
 import * as Yup from 'yup'
 import { NextApiResponse } from 'next'
 import extractAuthData from '../../utils/extractAuthData'
-import { ForbiddenError } from '../../utils/errors'
+import { ForbiddenError, UnauthorizedError } from '../../utils/errors'
 
 export type UserResponseData = { user: (WithoutPassword<User> | null) }
 type UserResponse = NextApiResponse<ResponseBody<UserResponseData>>
@@ -28,7 +28,9 @@ export const getHandler: RequestHandler = async (req, res: UserResponse, next) =
     }
 
     if (authenticated) {
-      return res.json({ status: 'success', data: extractAuthData(req) })
+      return req.isAuthenticated()
+        ? res.json({ status: 'success', data: extractAuthData(req) })
+        : next(new UnauthorizedError('No hay una sesión activa'))
     }
   } catch (e) {
     next(e)

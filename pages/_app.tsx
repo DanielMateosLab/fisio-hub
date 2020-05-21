@@ -2,10 +2,9 @@ import { AppProps } from 'next/app'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import theme from '../utils/theme'
-import Navbar from '../components/navbar'
-import Container from '@material-ui/core/Container'
 import { Provider } from 'react-redux'
 import store from 'redux/store'
+import UserFetcher from '../components/userFetcher'
 
 // import App from 'next/app'
 
@@ -15,10 +14,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <Provider store={store} >
-          <Navbar />
-          <Container style={{ paddingTop: "24px", paddingBottom: "24px"}}>
+          <UserFetcher >
             <Component {...pageProps} />
-          </Container>
+          </UserFetcher>
         </Provider>
       </ThemeProvider>
     </>

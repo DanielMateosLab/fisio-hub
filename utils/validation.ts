@@ -1,6 +1,5 @@
 import * as Yup from 'yup'
 import { fetcher } from './fetcher'
-import { SuccessResponse } from './types'
 
 const standardString = Yup.string()
   .min(3, 'Debe tener 3 o más carácteres')
@@ -36,9 +35,9 @@ export const userClientValidationSchema = Yup.object({
 
       if (this.parent.password || !isEmail) return true
 
-      const emailExists = await fetcher(`/api/users?email=${value}`)
+      const emailExists = fetcher(`/api/users?email=${value}`)
+        .then((res) => res.status === 'success' && !!res.data.user?.email)
         .catch(() => true)
-        .then((res: SuccessResponse) => !!res.data.user?.email)
       return !emailExists
     }),
   ...registrationPasswords

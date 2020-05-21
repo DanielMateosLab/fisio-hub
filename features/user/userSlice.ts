@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Center, Professional, User } from '../../storage/types'
 import { SuccessResponse } from '../../utils/types'
 import { AppThunk } from '../../redux/store'
+import { fetcher } from '../../utils/fetcher'
 
 interface UserState {
   user?: User
@@ -50,6 +51,17 @@ export const logOut = (): AppThunk => async dispatch => {
     }
   } catch (e) {
     dispatch(logOutFailed())
+  }
+}
+
+export const getUser = (): AppThunk<Promise<boolean>> => async dispatch => {
+  try {
+    const res = await fetcher('/api/users?authenticated=1')
+
+    res.status === 'success' && dispatch(logIn(res.data))
+    return true
+  } catch (e) {
+    return true
   }
 }
 

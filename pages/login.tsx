@@ -23,6 +23,9 @@ export default () => {
     professional && router.push('/user')
   }, [professional])
 
+  // Avoids component load when an authenticated professional is fetched on page load
+  if (professional) return null
+
   return (
     <Container maxWidth="xs">
       <Typography variant="h4" align="center" gutterBottom>

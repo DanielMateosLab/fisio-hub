@@ -1,11 +1,7 @@
 import React from 'react'
 import Grow from '@material-ui/core/Grow'
+import TransitionWrap from './TransitionWrap'
 
-const TransitionWrap: React.FC = (props) => (
-  <div {...props}>
-    { props.children }
-  </div>
-)
 
 const withGrowTransition = (wrappedComponent: React.ReactNode, inCondition: boolean) => (
   <Grow

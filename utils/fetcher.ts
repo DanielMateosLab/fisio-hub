@@ -17,4 +17,4 @@ export async function fetchPostOrPut(path: string, body: {},  method: 'POST' | '
     }
   }}
 
-export const fetcher = (url: string) => fetch(url).then((r) => r.json())
+export const fetcher = (url: string) => fetch(url).then((r) => r.json() as Promise<ResponseBody>)
