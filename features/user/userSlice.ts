@@ -9,14 +9,14 @@ interface UserState {
   user?: User
   professional?: Professional
   center?: Center
-  logOutError: string
+  logOutError: boolean
 }
 
 const initialState: UserState = {
   user: undefined,
   professional: undefined,
   center: undefined,
-  logOutError: ''
+  logOutError: false
 }
 
 const userSlice = createSlice({
@@ -32,12 +32,15 @@ const userSlice = createSlice({
       return { ...initialState }
     },
     logOutFailed(state) {
-      state.logOutError = 'No se ha podido cerrar sesión. Elimina manualmente las cookies de la página.'
+      state.logOutError = true
+    },
+    removeLogOutAlert(state) {
+      state.logOutError = false
     }
   }
 })
 
-const { logInSuccess, logOutSuccess, logOutFailed } = userSlice.actions
+const { logInSuccess, logOutSuccess, logOutFailed, removeLogOutAlert } = userSlice.actions
 
 export const logOut = (): AppThunk => async dispatch => {
   try {
@@ -74,6 +77,7 @@ export const getUser = (): AppThunk<Promise<boolean>> => async dispatch => {
   }
 }
 
+export { removeLogOutAlert }
 const userReducer = userSlice.reducer
 
 export default userReducer
