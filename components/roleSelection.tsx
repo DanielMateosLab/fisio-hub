@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../redux/rootReducer'
-import SwitchAuthFooter from './switchAuthFooter'
 import { Role } from '../storage/types'
 import { fetchPostOrPut } from '../utils/fetcher'
 import { logIn, logOut } from 'features/user/userSlice'
@@ -13,6 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Divider from '@material-ui/core/Divider'
 import { useMediaQuery } from '@material-ui/core'
 import useTheme from '@material-ui/core/styles/useTheme'
+import NoRolesAlert from './noRolesAlert'
 
 interface Props {
   open: boolean
@@ -20,11 +20,13 @@ interface Props {
 
 const RoleSelection: React.FC<Props> = ({open}) => {
   const roles = useSelector((state: RootState) => state.user.user?.roles)
+  // Errors are set in the form of { [key: center_id]: errorMessageString }
   const [ error, setError ] = useState<any>({})
   const dispatch = useDispatch()
 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('xs'))
+
 
   async function selectRole({ center_id, centerName }: Role) {
     const res = await fetchPostOrPut('/api/login',{ center_id, centerName }, 'PUT')
@@ -39,20 +41,19 @@ const RoleSelection: React.FC<Props> = ({open}) => {
     dispatch(logIn(res.data))
   }
 
-  if(!roles) return null
-
-  if (!roles.length) {
-    return <SwitchAuthFooter
-      auxiliaryText="Parece que no hay ningún centro o servicio de fisioterapia asociado a tu usuario. "
-      linkText="¡Regístrate y prueba FisioHub!"
-      href="/register" />
+  function handleClose() {
+    dispatch(logOut())
   }
+
+
+  if(!roles) return null
+  if (!roles.length) return <NoRolesAlert handleClose={handleClose} open={open} />
 
   return (
     <>
       <Dialog
         open={open}
-        onClose={() => dispatch(logOut())}
+        onClose={handleClose}
         fullScreen={fullScreen}
       >
         <DialogTitle>Selecciona una cuenta</DialogTitle>
