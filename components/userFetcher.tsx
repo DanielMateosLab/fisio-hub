@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { getUser } from '../features/user/userSlice'
 import { AppDispatch } from '../redux/store'
 import Navbar from './navbar/navbar'
+import Cookies from 'js-cookie'
 
 const UserFetcher: React.FC = ({ children }) => {
   const [ userRequested, setUserRequested ] = useState(false)
@@ -11,7 +12,8 @@ const UserFetcher: React.FC = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const done = await dispatch(getUser())
+      const sessionPresent = Cookies.get('ss')
+      const done = sessionPresent ? await dispatch(getUser()) : true
       setUserRequested(done)
     })()
   }, [])
