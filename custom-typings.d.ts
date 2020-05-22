@@ -1,6 +1,6 @@
 import { Db, MongoClient } from 'mongodb'
-import { ResponseBody } from './utils/types'
-import { AuthData } from './utils/passport'
+import { ResponseBody } from './common/APITypes'
+import { AuthData } from './server/passport'
 
 declare module 'http' {
   interface IncomingMessage {

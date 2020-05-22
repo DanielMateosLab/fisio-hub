@@ -4,14 +4,14 @@ import Typography from '@material-ui/core/Typography'
 import Stepper from '@material-ui/core/Stepper'
 import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
-import RegisterCenter from '../components/register/registerCenter'
-import AuthenticateUser from '../components/register/authenticateUser'
+import RegisterCenterForm from '../client/session/register/RegisterCenterForm'
+import AuthenticateUser from '../client/session/register/AuthenticateUser'
 import { useSelector } from 'react-redux'
-import { RootState } from '../redux/rootReducer'
+import { RootState } from '../client/redux/rootReducer'
 import { useRouter } from 'next/router'
 
 const Register = () => {
-  const { user, professional } = useSelector((state: RootState) => state.user)
+  const { user, professional } = useSelector((state: RootState) => state.session)
   const router = useRouter()
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Register = () => {
       case 0:
         return <AuthenticateUser />
       case 1:
-        return <RegisterCenter />
+        return <RegisterCenterForm />
       default:
         return 'No deberías haber llegado hasta aquí'
     }

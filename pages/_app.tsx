@@ -1,10 +1,10 @@
 import { AppProps } from 'next/app'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
-import theme from '../utils/theme'
+import theme from '../client/common/theme'
 import { Provider } from 'react-redux'
-import store from 'redux/store'
-import UserFetcher from '../components/userFetcher'
+import store from 'client/redux/store'
+import UserFetcher from '../client/session/UserFetcher'
 
 // import App from 'next/app'
 

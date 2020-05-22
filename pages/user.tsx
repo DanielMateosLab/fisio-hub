@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
 import { useSelector } from 'react-redux'
-import { RootState } from '../redux/rootReducer'
+import { RootState } from '../client/redux/rootReducer'
 import { useRouter } from 'next/router'
 
 const User = () => {
-  const { professional } = useSelector((state: RootState) => state.user)
+  const { professional } = useSelector((state: RootState) => state.session)
   const router = useRouter()
 
   useEffect(() => {

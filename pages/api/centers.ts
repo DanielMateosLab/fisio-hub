@@ -1,12 +1,12 @@
 import nextConnect from "next-connect"
-import onError from 'middlewares/onError'
+import onError from 'server/middlewares/onError'
 import { NextApiResponse } from 'next'
-import { ResponseBody } from '../../utils/types'
-import { UnauthorizedError } from '../../utils/errors'
-import { centerValidationSchema } from '../../utils/validation'
-import centersDAO from '../../storage/centersDAO'
-import middleware from '../../middlewares/middleware'
-import extractAuthData from '../../utils/extractAuthData'
+import { ResponseBody } from 'common/APITypes'
+import { UnauthorizedError } from 'common/errors'
+import { centerValidationSchema } from 'common/validation'
+import centersDAO from 'server/storage/centersDAO'
+import middleware from 'server/middlewares/middleware'
+import { extractAuthData } from 'server/APIUtils'
 
 const handler = nextConnect({ onError })
 

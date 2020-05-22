@@ -1,14 +1,14 @@
 import nextConnect from 'next-connect'
-import middleware from '../../middlewares/middleware'
-import onError from '../../middlewares/onError'
-import UsersDAO from '../../storage/usersDAO'
-import { userServerValidationSchema } from '../../utils/validation'
-import { RequestHandler, ResponseBody, WithoutPassword } from '../../utils/types'
-import { User } from '../../storage/types'
+import middleware from '../../server/middlewares/middleware'
+import onError from '../../server/middlewares/onError'
+import UsersDAO from '../../server/storage/usersDAO'
+import { userServerValidationSchema } from '../../common/validation'
+import { RequestHandler, ResponseBody } from '../../common/APITypes'
+import { User, WithoutPassword } from '../../common/entityTypes'
 import * as Yup from 'yup'
 import { NextApiResponse } from 'next'
-import extractAuthData from '../../utils/extractAuthData'
-import { ForbiddenError, UnauthorizedError } from '../../utils/errors'
+import { ForbiddenError, UnauthorizedError } from '../../common/errors'
+import { extractAuthData } from 'server/APIUtils'
 
 export type UserResponseData = { user: (WithoutPassword<User> | null) }
 type UserResponse = NextApiResponse<ResponseBody<UserResponseData>>
@@ -24,7 +24,9 @@ export const getHandler: RequestHandler = async (req, res: UserResponse, next) =
         .catch(e => res.status(400).json({ status: 'fail', data: { email: e.message } }))
 
       const user = validEmail && await UsersDAO.getUserByEmail(validEmail)
-      return res.json({ status: 'success', data: { user: user ? { email: user.email } : null } })
+      return user
+        ? res.json({ status: 'success', data: { user: { email: user.email, roles: [] } } })
+        : res.status(404).end()
     }
 
     if (authenticated) {
@@ -44,7 +46,7 @@ export const postHandler: RequestHandler = async (req, res: UserResponse, next) 
     const validUser = await userServerValidationSchema.validate(req.body, { abortEarly: false })
     delete validUser.repeatPassword
 
-    const user = await UsersDAO.addUser(validUser)
+    const user = await UsersDAO.addUser({ ...validUser, roles: [] })
 
     req.logIn({ user }, err => err && next(err))
 

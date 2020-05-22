@@ -1,22 +1,15 @@
 import React, { useEffect } from "react"
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-import SwitchAuthFooter from 'components/switchAuthFooter'
-import Login from '../components/login'
+import LoginForm from '../client/session/login/LoginForm'
 import { useSelector } from 'react-redux'
-import { RootState } from '../redux/rootReducer'
+import { RootState } from '../client/redux/rootReducer'
 import { useRouter } from 'next/router'
-import RoleSelection from '../components/roleSelection'
-
-const UserAuthentication = () => (
-  <>
-    <Login />
-    <SwitchAuthFooter auxiliaryText="¿No tienes cuenta? " linkText="Regístrate" href="/register" />
-  </>
-)
+import RoleSelectionModal from '../client/session/login/RoleSelectionModal'
+import Link from '@material-ui/core/Link'
 
 export default () => {
-  const { professional, user } = useSelector((state: RootState) => state.user)
+  const { professional, user } = useSelector((state: RootState) => state.session)
   const router = useRouter()
 
   useEffect(() => {
@@ -31,8 +24,14 @@ export default () => {
       <Typography variant="h4" align="center" gutterBottom>
         Inicia sesión
       </Typography>
-      <UserAuthentication />
-      <RoleSelection open={!!user} />
+
+      <LoginForm />
+      <Typography style={{ marginTop: "24px" }} variant="subtitle1" align="center" gutterBottom>
+        ¿No tienes cuenta?
+        <Link href={'/register'}> Regístrate </Link>
+      </Typography>
+
+      <RoleSelectionModal open={!!user} />
     </Container>
   )
 }

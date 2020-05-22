@@ -1,10 +1,10 @@
-import ProfessionalsDAO from "../../storage/professionalsDAO";
-import { centerValidationSchema } from '../../utils/validation'
+import ProfessionalsDAO from "../../server/storage/professionalsDAO";
+import { centerValidationSchema } from '../../common/validation'
 import nextConnect from 'next-connect'
-import middleware from '../../middlewares/middleware'
-import { centers, professionals, users } from '../../middlewares/collections'
-import onError from '../../middlewares/onError'
-import { Professional } from '../../storage/types'
+import middleware from '../../server/middlewares/middleware'
+import { centers, professionals, users } from '../../server/middlewares/collections'
+import onError from '../../server/middlewares/onError'
+import { Professional } from '../../common/entityTypes'
 import { NextApiResponse } from 'next'
 
 export type ProfessionalsResponseData = { professional: Professional } & { professionals: Professional[] }
