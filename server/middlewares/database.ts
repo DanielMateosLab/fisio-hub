@@ -23,6 +23,6 @@ export default async function database(
 
     return next()
   } catch (err) {
-    throw new DbUnavailableError(err.message)
+    next(new DbUnavailableError(err.message))
   }
 }
