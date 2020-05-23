@@ -23,7 +23,9 @@ const ToolbarContent: React.FC = () => {
   return (
     <>
       <Typography variant="h6"> {center && center.name || 'FisioHub'} </Typography>
+
       <div className={separator}/>
+
       {user && pathname !== '/register' &&
       <Button onClick={() => dispatch(logOut())} variant="text" color="inherit">Cerrar sesión</Button>
       }
