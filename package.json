@@ -7,7 +7,7 @@
     "docker": "docker-compose up -d && docker-compose logs -f server",
     "build": "next build",
     "start": "next start",
-    "dbschemas": "tsc server/storage/schemas.ts && node storage/schemas.js",
+    "dbschemas": "tsc server/storage/schemas.ts && node server/storage/schemas.js && docker-compose up -d mongo && DB_URI_ADMIN=mongodb://${DB_USERNAME}:${DB_PW}@mongo && node server/storage/schemas.js && docker-compose down && rm server/storage/schemas.js",
     "test": "jest"
   },
   "dependencies": {
@@ -47,6 +47,8 @@
     "@types/yup": "^0.28.0",
     "jest": "^25.4.0",
     "morgan": "^1.10.0",
-    "typescript": "^3.8.3"
+    "ts-node": "^8.10.1",
+    "typescript": "^3.8.3",
+    "wait-port": "^0.2.7"
   }
 }

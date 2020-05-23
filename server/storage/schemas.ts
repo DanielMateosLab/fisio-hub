@@ -1,5 +1,4 @@
 require('dotenv').config()
-import { unlink } from 'fs'
 import { Db, MongoClient } from 'mongodb'
 
 type BSONType =
@@ -292,7 +291,6 @@ async function addValidatorsToDb(db: Db) {
 
 // Script to add the validators to a cluster
 ;(async () => {
-  let completed = false
   const uri = process.env.DB_URI_ADMIN
   const dbName = process.env.DB_NAME
   if (!uri || !dbName) {
@@ -318,21 +316,9 @@ async function addValidatorsToDb(db: Db) {
     await addValidatorsToDb(testDb)
 
     console.log('\x1b[32m%s\x1b[0m','Successfully added/updated all the validators')
-    completed = true
   } catch (e) {
     console.error(e)
   } finally {
     await client.close()
-    // Remove schemas.js file
-    if (completed) {
-      console.log(`Removing ${__filename}...`)
-      unlink(__filename, err => {
-        if (!err) {
-          console.log('Done!')
-        } else {
-          console.error('Could not remove schemas.js, do it manually if you wish')
-        }
-      })
-    }
   }
 })()

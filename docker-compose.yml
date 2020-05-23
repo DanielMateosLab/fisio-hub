@@ -8,18 +8,21 @@ services:
       MONGO_INITDB_ROOT_USERNAME: "${DB_USERNAME?Missing DB username}"
       MONGO_INITDB_ROOT_PASSWORD: "${DB_PW?Missing DB password}"
     volumes: 
-      - memorizadb:/data/db
+      - fisiohubdb:/data/db
+    ports:
+      - 27017:27017
 
   server:
     image: node:12.16.1
-    command: sh -c "npx wait-port mongo:27017 && yarn dev"
+    command: sh -c "yarn wait-port mongo:27017 && yarn dev"
     working_dir: /fisio-hub
     volumes: 
       - ./:/fisio-hub
     environment: 
-      DB_URI: "mongodb://${DB_USERNAME}:${DB_PW}@mongo"
+      DB_URI: "mongodb://${DB_USERNAME}:${DB_PW}@mongo/admin"
+      DB_URI_ADMIN: "mongodb://${DB_USERNAME}:${DB_PW}@mongo"
     ports:
       - 3000:3000
     
 volumes: 
-  memorizadb:
+  fisiohubdb:
