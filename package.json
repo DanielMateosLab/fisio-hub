@@ -7,7 +7,8 @@
     "docker": "docker-compose up -d && docker-compose logs -f server",
     "build": "next build",
     "start": "next start",
-    "dbschemas": "tsc server/storage/schemas.ts && node server/storage/schemas.js && docker-compose up -d mongo && DB_URI_ADMIN=mongodb://${DB_USERNAME}:${DB_PW}@mongo && node server/storage/schemas.js && docker-compose down && rm server/storage/schemas.js",
+    "dbschemas": "tsc server/storage/schemas.ts && node server/storage/schemas.js && rm server/storage/schemas.js",
+    "dbschemas-docker": "docker-compose up -d && docker-compose exec server yarn dbschemas && docker-compose down && rm server/storage/schemas.js",
     "test": "jest"
   },
   "dependencies": {

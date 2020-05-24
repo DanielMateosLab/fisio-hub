@@ -306,7 +306,7 @@ async function addValidatorsToDb(db: Db) {
   )
 
   try {
-    await client.connect()
+    await client.connect().then(() => console.log('Client uri:' + uri))
 
     const db = client.db(dbName)
     await addValidatorsToDb(db)
