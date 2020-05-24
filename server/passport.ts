@@ -38,6 +38,9 @@ passport.deserializeUser<AuthData, SessionData, NextApiRequest>
       professional: professional || undefined,
       center: center || undefined
     })
+    req.logOut()
+    req.session.destroy()
+    return done(new NotFoundError('Borra las cookies del navegador y vuelve a intentarlo'))
   } catch (e) {
     return done(new NotFoundError('Borra las cookies del navegador y vuelve a intentarlo'))
   }

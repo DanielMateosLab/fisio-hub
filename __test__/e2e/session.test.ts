@@ -1,3 +1,4 @@
+require('dotenv').config()
 import playwright, { chromium } from 'playwright'
 import { MongoClient } from 'mongodb'
 
@@ -6,7 +7,10 @@ let context: playwright.BrowserContext
 let page: playwright.Page
 const BASE_URL = 'localhost:3000'
 
-describe('login', () => {
+const email = 'a@a.com'
+const password = 'aaaaa'
+
+describe('session', () => {
 
   beforeEach(async () => {
     browser = await chromium.launch()
@@ -20,12 +24,19 @@ describe('login', () => {
   })
 
   afterAll(async () => {
-    const client = new MongoClient(`mongodb://${process.env.DB_USERNAME}:${process.env.DB_PW}@localhost`)
-    await client.connect()
-    await client.db(process.env.DB_NAME).collection('users').deleteMany({})
-    await client.db(process.env.DB_NAME).collection('professionals').deleteMany({})
-    await client.db(process.env.DB_NAME).collection('sessions').deleteMany({})
-    await client.db(process.env.DB_NAME).collection('centers').deleteMany({})
+    try {
+      const client = new MongoClient(`mongodb://localhost:27017`,
+        { useUnifiedTopology: true, useNewUrlParser: true, authSource : 'admin' })
+      await client.connect()
+      await client.db(process.env.DB_NAME).collection('users').deleteMany({})
+      await client.db(process.env.DB_NAME).collection('professionals').deleteMany({})
+      await client.db(process.env.DB_NAME).collection('sessions').deleteMany({})
+      await client.db(process.env.DB_NAME).collection('centers').deleteMany({})
+
+      await client.close()
+    } catch (e) {
+      console.error(e)
+    }
   })
 
   describe('register', () => {
@@ -37,13 +48,10 @@ describe('login', () => {
     })
     it('can register', async () => {
       await page.goto(BASE_URL + '/register')
-      await page.fill('input[name=email]', 'a@a.a')
-      await page.fill('input[name=password]', 'aaaaa')
-      await page.fill('input[name=repeatPassword]', 'aaaaa')
+      await page.fill('input[name=email]', email)
+      await page.fill('input[name=password]', password)
+      await page.fill('input[name=repeatPassword]', password)
       await page.click('text=Registrarme')
-
-      // Register center form shown
-      expect(await page.waitForSelector('text=a@a.com')).toBeDefined()
 
       await page.fill('input[name=firstName]', 'mockName')
       await page.fill('input[name=lastName]', 'mockLast')
@@ -55,19 +63,22 @@ describe('login', () => {
     })
     it('shows a warning when trying to register with an existing email', async () => {
       await page.goto(BASE_URL + '/register')
-      await page.fill('input[name=email]', 'a@a.a')
+      await page.fill('input[name=email]', email)
+      await page.fill('input[name=password]', password)
 
-      await page.click('text=Inicia sesión')
-      expect(await page.waitForSelector('text=¿Has cambiado de idea?')).toBeDefined()
+      expect(await page.waitForSelector('text=Vaya,')).toBeDefined()
     })
   })
-  it('can log in', async () => {
-    await page.fill('input[name=email]', 'a@a.com')
-    await page.fill('input[name=password]', 'aaaaa')
-    await page.click('text=Iniciar sesión')
 
-    await page.waitForSelector('text=Dirección de')
+  describe('login', () => {
+    it('can log in', async () => {
+      await page.fill('input[name=email]', email)
+      await page.fill('input[name=password]', password)
+      await page.click('text=Iniciar sesión')
 
-    expect(page.url()).toMatch('/user')
+      await page.waitForSelector('text=Dirección de')
+
+      expect(page.url()).toMatch('/user')
+    })
   })
 })

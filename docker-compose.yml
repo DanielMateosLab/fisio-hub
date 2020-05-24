@@ -6,6 +6,8 @@ services:
     image: mongo:4.2.5
     volumes:
       - fisiohubdb1:/data/db
+    ports:
+      - 27017:27017
     command: --replSet replSet
 
   rs2:
@@ -24,9 +26,9 @@ services:
     image: node:12.16.1
     command: sh -c "yarn wait-port rs1:27017 && yarn dev"
     working_dir: /fisio-hub
-    volumes: 
+    volumes:
       - ./:/fisio-hub
-    environment: 
+    environment:
       DB_URI: "mongodb://rs1,rs2,rs3/?replicaSet=replSet"
       DB_URI_ADMIN: "mongodb://rs1,rs2,rs3/?replicaSet=replSet"
     ports:
