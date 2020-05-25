@@ -10,16 +10,14 @@ import UserFetcher from '../client/session/UserFetcher'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <Provider store={store} >
-          <UserFetcher >
-            <Component {...pageProps} />
-          </UserFetcher>
-        </Provider>
-      </ThemeProvider>
-    </>
+      <Provider store={store} >
+        <UserFetcher >
+          <Component {...pageProps} />
+        </UserFetcher>
+      </Provider>
+    </ThemeProvider>
   )
 }
 

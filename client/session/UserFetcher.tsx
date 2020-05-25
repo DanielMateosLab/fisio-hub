@@ -6,10 +6,12 @@ import { AppDispatch } from '../redux/store'
 import Navbar from 'client/navbar/Navbar'
 import Cookies from 'js-cookie'
 import LogOutErrorAlert from './LogOutErrorAlert'
+import { useRouter } from 'next/router'
 
 const UserFetcher: React.FC = ({ children }) => {
   const [ userRequested, setUserRequested ] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
 
   useEffect(() => {
     (async () => {
@@ -22,9 +24,14 @@ const UserFetcher: React.FC = ({ children }) => {
   return (
     <>
       <Navbar userRequested={userRequested} />
-      <Container style={{ paddingTop: "24px", paddingBottom: "24px"}}>
-        { userRequested &&  children }
-      </Container>
+      { router.pathname === '/schedule'
+        ? userRequested && children
+        : (
+          <Container style={{ paddingTop: "24px", paddingBottom: "24px"}}>
+            { userRequested &&  children }
+          </Container>
+        )
+      }
       <LogOutErrorAlert />
     </>
   )

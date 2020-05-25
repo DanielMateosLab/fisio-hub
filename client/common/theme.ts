@@ -10,5 +10,23 @@ export default createMuiTheme({
       light: '#f05545',
       contrastText: '#ffffff'
     }
+  },
+  overrides: {
+    MuiCssBaseline: {
+      '@global': {
+        '*::-webkit-scrollbar': {
+          width: 16,
+          height: 16,
+          background: 'transparent'
+        },
+        '*::-webkit-scrollbar-thumb': {
+          border: '4px solid white',
+          background: 'lightgrey',
+          '&:hover': {
+            background: 'darkgrey'
+          }
+        }
+      }
+    }
   }
 })
