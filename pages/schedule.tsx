@@ -121,11 +121,11 @@ export default () => {
 
   return (
     <Grid container className={classes.pageContainer}>
-      <Grid item xs={3} style={{ overflowY: 'auto', height: 'calc(100vh - 88px)' }}>
+      <Grid item style={{ overflowY: 'auto', height: 'calc(100vh - 88px)', width: 240 }}>
         <ScheduleMenu {...{ professionals, changeProfessionals, selectedProfessionals }}/>
       </Grid>
 
-      <Grid id="appointments" item container direction='column' xs={9}>
+      <Grid id="appointments" item container direction='column' xs>
         { !!selectedProfessionals.length && <ScheduleMain {...{ gaps, hourGaps, classes, selectedProfessionals, timeLinePosition }} /> }
       </Grid>
 
