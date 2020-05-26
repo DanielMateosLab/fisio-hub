@@ -20,11 +20,12 @@ const ScheduleMenu: React.FC<Props> = ({ professionals, selectedProfessionals, c
       <List id="professionals-list" component="nav">
         {professionals.map((p, i) => (
           <ListItem
+            key={p.name}
             dense
             button
             onClick={() => {
               changeProfessionals((prevState => prevState.map((p, ix) => {
-                if (selectedProfessionals.length == 4 && !p.selected) return p
+                if (selectedProfessionals.length == 7 && !p.selected) return p
                 return i === ix
                   ? { name: p.name, selected: !p.selected }
                   : p
@@ -43,8 +44,8 @@ const ScheduleMenu: React.FC<Props> = ({ professionals, selectedProfessionals, c
           </ListItem>
         ))}
       </List>
-      {selectedProfessionals.length == 4 && (
-        <Typography color="secondary" variant="subtitle2"> Puedes seleccionar 4 trabajadores como máximo </Typography>
+      {selectedProfessionals.length == 7 && (
+        <Typography color="secondary" variant="subtitle2"> Puedes seleccionar 7 trabajadores como máximo </Typography>
       )}
     </Container>
   )

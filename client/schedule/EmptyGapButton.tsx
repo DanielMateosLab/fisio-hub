@@ -7,9 +7,7 @@ const useStyles = makeStyles(theme => ({
   emptyGapText: {
     color: theme.palette.primary.light
   },
-  gapButton: {
-    width: "100%",
-    height: "100%",
+  dynamicGapButton: {
     '& div': {
       display: 'none'
     },
@@ -21,16 +19,17 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
   timeText: string
+  showTimeInEmptyGaps: boolean
 }
 
-const EmptyGapButton: React.FC<Props> = ({ timeText }) => {
+const EmptyGapButton: React.FC<Props> = ({ timeText, showTimeInEmptyGaps }) => {
   const classes = useStyles()
 
   return (
-    <ListItem button className={classes.gapButton} >
+    <ListItem button className={ showTimeInEmptyGaps ? classes.dynamicGapButton : '' } >
       <ListItemText
         primary={timeText}
-        primaryTypographyProps={{ align: 'center', className: classes.emptyGapText, variant: 'overline' }}
+        primaryTypographyProps={{ align: 'center', color: 'primary', variant: 'overline' }}
       />
     </ListItem>
   )

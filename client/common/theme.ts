@@ -21,6 +21,7 @@ export default createMuiTheme({
         },
         '*::-webkit-scrollbar-thumb': {
           border: '4px solid white',
+          borderRadius: 8,
           background: 'lightgrey',
           '&:hover': {
             background: 'darkgrey'
