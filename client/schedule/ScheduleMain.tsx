@@ -13,7 +13,9 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     marginTop: -2,
     marginLeft: 24,
-    top: (timeLinePosition: number) => timeLinePosition
+    top: (timeLinePosition: number) => timeLinePosition,
+    zIndex: 3,
+    opacity: 0.5
   },
   TimeLineCaption: {
     position: 'relative',
@@ -24,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     color: 'white',
     background: theme.palette.secondary.main,
     borderRadius: 8,
-    zIndex: 1
+    zIndex: 3,
   }
 }))
 

@@ -6,9 +6,11 @@ import teal from '@material-ui/core/colors/teal'
 import ScheduleMenu from '../client/schedule/ScheduleMenu'
 import ScheduleMain from '../client/schedule/ScheduleMain'
 import moment, { Moment } from 'moment'
-import AppointmentGap from '../client/schedule/AppointmentGap'
+import AppointmentCard from '../client/schedule/AppointmentCard'
+import EmptyGapButton from '../client/schedule/EmptyGapButton'
+import { mockAppointment } from '../__test__/testUtils'
 
-export const gapHeight = 72
+export const gapHeight = 96
 
 const useStyles = makeStyles({
   pageContainer: {
@@ -60,7 +62,7 @@ export default () => {
   )
   const selectedProfessionals = professionals.filter(p => p.selected)
 
-  const gapMinutes = 30
+  const gapMinutes = 60
   const gapCount = 24 * 60 / gapMinutes
   const date = moment()
 
@@ -96,13 +98,15 @@ export default () => {
 
   for (let i = 0; i < gapCount; i++) {
     gaps.push(
-      <Grid item container className={classes.gap} key={i} tabIndex={-1}>
-        <AppointmentGap date={getGapDate(i)} showTimeInEmptyGaps={selectedProfessionals.length == 1} />
+      <Grid item container className={classes.gap} key={i}>
+        { i == 20 ? <AppointmentCard appointment={mockAppointment} /> :
+          <EmptyGapButton timeText={date.format("HH:mm")} showTimeInEmptyGaps={selectedProfessionals.length == 1}/>
+        }
       </Grid>
     )
 
     hourGaps.push(
-      <Grid item container key={`timeGap.${i}`} tabIndex={-1}>
+      <Grid item container key={`timeGap.${i}`}>
         <Grid item xs={9}>
           { i > 0 && selectedProfessionals.length == 1 &&
             <Typography className={classes.timeText} color="primary" variant="caption">
