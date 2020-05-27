@@ -8,9 +8,9 @@ import ScheduleMain from '../client/schedule/ScheduleMain'
 import moment, { Moment } from 'moment'
 import AppointmentGap from '../client/schedule/AppointmentGap'
 
-const gapHeight = 72
+export const gapHeight = 72
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   pageContainer: {
     paddingTop: 24
   },
@@ -32,15 +32,8 @@ const useStyles = makeStyles(theme => ({
   timeText: {
     position: 'relative',
     bottom: 12
-  },
-  actualTimeLine: {
-    width: '100%',
-    border: `solid 1px ${theme.palette.secondary.main}`,
-    position: 'relative',
-    marginTop: -2,
-    marginLeft: 48
   }
-}))
+})
 
 export type ScheduleClasses = ReturnType<typeof useStyles>
 
@@ -54,13 +47,13 @@ export default () => {
 
   const [ professionals, changeProfessionals ] = useState<ProfessionalsData[]>(
     [
-      { name: 'Daniel Mateos', selected: true },
+      { name: 'Daniel Mateos', selected: false },
       { name: 'Jorge Calviño', selected: true },
-      { name: 'Miriam Rodríguez', selected: true },
-      { name: 'Simón Sánchez', selected: true },
-      { name: 'Almudena Carrasco', selected: true },
-      { name: 'José Manuel', selected: true },
-      { name: 'Arturo Carrasco', selected: true },
+      { name: 'Miriam Rodríguez', selected: false },
+      { name: 'Simón Sánchez', selected: false },
+      { name: 'Almudena Carrasco', selected: false },
+      { name: 'José Manuel', selected: false },
+      { name: 'Arturo Carrasco', selected: false },
       { name: 'María Luisa', selected: false },
       { name: 'Alejandro Miguel', selected: false },
     ]
@@ -82,18 +75,21 @@ export default () => {
 
   const getTimeLinePosition = (time: Moment) => {
     const hoursPosition = time.hour() * (60 / gapMinutes) * gapHeight
-    const minutesPosition = (time.minute() + 1) * ( gapHeight / gapMinutes )
+    const minutesPosition = (time.minute()) * ( gapHeight / gapMinutes )
 
     return hoursPosition + minutesPosition
   }
 
-  const [ timeLinePosition, setTimeLinePosition ] = useState(getTimeLinePosition(moment()))
+  const [ time, setTime ] = useState(moment())
+  const timeLinePosition = getTimeLinePosition(time)
 
   useEffect(() => {
     setTimeout(() => {
-      setTimeLinePosition(getTimeLinePosition(moment()))
+      const actualTime = moment()
+      actualTime.add(1, 'minute')
+      setTime(actualTime)
     }, 60000)
-  }, [ timeLinePosition ])
+  }, [ time ])
 
   let gaps: ReactNode[] = []
   let hourGaps: ReactNode[] = []
@@ -126,7 +122,9 @@ export default () => {
       </Grid>
 
       <Grid id="appointments" item container direction='column' xs>
-        { !!selectedProfessionals.length && <ScheduleMain {...{ gaps, hourGaps, classes, selectedProfessionals, timeLinePosition }} /> }
+        { !!selectedProfessionals.length &&
+          <ScheduleMain {...{ gaps, hourGaps, classes, selectedProfessionals, timeLinePosition, time }} />
+        }
       </Grid>
 
     </Grid>
