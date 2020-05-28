@@ -6,6 +6,7 @@ import { Euro } from '@material-ui/icons'
 import { brown, green, teal } from '@material-ui/core/colors'
 import moment from 'moment'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import Grid from '@material-ui/core/Grid'
 
 const useStyles = makeStyles({
   root: {
@@ -22,10 +23,8 @@ const useStyles = makeStyles({
       backgroundColor: teal['100']
     }
   },
-  icons: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center'
+  icon: {
+    position: 'relative',
   }
 })
 
@@ -40,12 +39,20 @@ const AppointmentCard: React.FC<Props> = ({appointment}) => {
 
   return (
     <Paper className={classes.root}>
-      <Typography color="textSecondary" variant="caption">
-        { moment(date).format("HH:mm") }
-      </Typography>
-      <Typography color="primary" variant="subtitle2">{ `${patient.firstName} ${patient.lastName}` }</Typography>
-      <Typography variant="caption">{ service.name }</Typography>
-      { payment && <Euro style={{ color: green['500'] }} fontSize="small" /> }
+      <Grid container spacing={2}>
+        <Grid item>
+          <Typography color="textSecondary" variant="caption">
+            { moment(date).format("HH:mm") }
+          </Typography>
+          <Typography color="primary" variant="subtitle2">{ `${patient.firstName} ${patient.lastName}` }</Typography>
+          <Typography variant="caption">{ service.name }</Typography>
+        </Grid>
+        { payment && (
+          <Grid item xs container alignItems="center" justify="center">
+            <Euro style={{ color: green['500'] }} fontSize="small"/>
+          </Grid>
+        ) }
+      </Grid>
     </Paper>
   )
 }
