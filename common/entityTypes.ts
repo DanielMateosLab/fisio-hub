@@ -1,9 +1,10 @@
 import { ObjectId } from 'bson'
 
+export type WithoutId<T extends { _id: ObjectId | string}> = Omit<T, '_id'>
 
 export interface Center {
   /** The center_id is a custom-generated id suitable to be a shard key */
-  _id?: string
+  _id: string
   name: string
 }
 
@@ -19,14 +20,14 @@ export interface Role {
 }
 
 export interface User {
-  _id?: ObjectId
+  _id: ObjectId
   email: string
   password?: string
   roles: Role[]
 }
 
 export interface Professional {
-  _id?: ObjectId
+  _id: ObjectId
   center_id: string
   isAdmin: boolean
   firstName: string
@@ -35,7 +36,7 @@ export interface Professional {
 }
 
 export interface Patient {
-  _id?: ObjectId
+  _id: ObjectId
   center_id: string
   firstName: string
   lastName: string
@@ -47,14 +48,14 @@ export interface Patient {
 }
 
 export interface Service {
-  _id?: ObjectId
+  _id: ObjectId
   name: string
   duration: number
   price: number
 }
 
 export interface Appointment {
-  _id?: ObjectId
+  _id: ObjectId
   center_id: string
   date: Date
   professional: {

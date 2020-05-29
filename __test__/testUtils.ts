@@ -1,4 +1,4 @@
-import { Appointment, Center, Professional, Role, User } from '../common/entityTypes'
+import { Appointment, Center, Professional, Role, User, WithoutId } from '../common/entityTypes'
 import { ObjectID } from 'bson'
 
 export const mockCenter: Center = {
@@ -6,7 +6,7 @@ export const mockCenter: Center = {
   name: 'mockCenter'
 }
 
-export const mockProfessional: Professional = {
+export const mockProfessional: WithoutId<Professional> = {
   center_id: mockCenter._id!,
   isAdmin: true,
   email: 'a@a.com',
@@ -14,7 +14,7 @@ export const mockProfessional: Professional = {
   lastName: 'bbbb cccc'
 }
 
-export const mockUser: User = {
+export const mockUser: WithoutId<User> = {
   email: 'a@a.com',
   password: 'mockPassword',
   roles: []
@@ -46,8 +46,8 @@ export const mockAppointment: Appointment = {
   },
   patient: {
     _id: new ObjectID(),
-    firstName: 'Jhon',
-    lastName: 'Doe',
+    firstName: 'María Dolores',
+    lastName: 'Del Pazo Butragueño',
   },
   date: new Date(),
   _id: new ObjectID(),

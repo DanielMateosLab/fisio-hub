@@ -1,6 +1,6 @@
 import { Collection, MongoClient, ObjectId } from 'mongodb'
 import { FieldValidationError } from '../../common/errors'
-import { Center, Professional, Role, User } from '../../common/entityTypes'
+import { Center, Professional, Role, User, WithoutId } from '../../common/entityTypes'
 
 let client: MongoClient
 let professionals: Collection<Professional>
@@ -28,12 +28,12 @@ export default class ProfessionalsDAO {
    * - Looks for a user with the given email, if it does not exist, it creates it.
    * - Adds the created professional to the user roles.
    */
-  static async addProfessional(professional: Professional, newCenter = false) {
+  static async addProfessional(professional: WithoutId<Professional>, newCenter = false) {
     const centers = client.db(process.env.DB_NAME).collection<Center>('centers')
     const users = client.db(process.env.DB_NAME).collection<User>('users')
 
     const { center_id, email } = professional
-    professional._id = new ObjectId()
+    const professionalId = new ObjectId()
 
     const alreadyExists = !newCenter && await this.getProfessionalByCenterIdAndEmail(center_id, email)
     if (alreadyExists) {
@@ -42,7 +42,7 @@ export default class ProfessionalsDAO {
 
     const role: Role = {
       role: 'professional',
-      role_id: professional._id,
+      role_id: professionalId,
       firstName: professional.firstName,
       lastName: professional.lastName,
       center_id,
@@ -62,7 +62,7 @@ export default class ProfessionalsDAO {
 
     const session = client.startSession()
     const transactionResult = await session.withTransaction(async () => {
-      insertedProfessional = await professionals.insertOne(professional, { session }).then(r => r.ops[0])
+      insertedProfessional = await professionals.insertOne({ ...professional, _id: professionalId }, { session }).then(r => r.ops[0])
 
       await users.updateOne(
         { email },

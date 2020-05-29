@@ -1,7 +1,7 @@
 import { Collection, Db, ObjectId } from 'mongodb'
 import bcrypt from 'bcryptjs'
 import { FieldValidationError, NotFoundError } from '../../common/errors'
-import { Role, User } from '../../common/entityTypes'
+import { Role, User, WithoutId } from '../../common/entityTypes'
 
 let users: Collection<User>
 
@@ -21,7 +21,7 @@ export default class UsersDAO {
     return await users.findOne({ _id })
   }
 
-  static async addUser(user: User): Promise<User> {
+  static async addUser(user: WithoutId<User>): Promise<User> {
     const { email, roles } = user
 
     const alreadyExists = await this.getUserByEmail(email)

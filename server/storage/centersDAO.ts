@@ -1,5 +1,5 @@
 import { Collection, MongoClient } from 'mongodb'
-import { Center, Professional } from '../../common/entityTypes'
+import { Center, Professional, WithoutId } from '../../common/entityTypes'
 import professionalsDAO from './professionalsDAO'
 
 let centers: Collection<Center>
@@ -23,7 +23,7 @@ export default class CentersDAO {
       .then(center => center ? { name: center.name } : null)
   }
 
-  static async createCenter(center: Center, professional: Omit<Professional, 'center_id'>) {
+  static async createCenter(center: WithoutId<Center>, professional: Omit<Professional, 'center_id' | '_id'>) {
     const _id = center.name + await centers.find({ name: center.name }).count() as any
     const insertedCenter = await centers.insertOne({ ...center, _id }).then(writeOpResult => writeOpResult.ops[0])
 

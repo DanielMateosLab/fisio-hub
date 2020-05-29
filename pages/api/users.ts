@@ -24,8 +24,10 @@ export const getHandler: RequestHandler = async (req, res: UserResponse, next) =
         .catch(e => res.status(400).json({ status: 'fail', data: { email: e.message } }))
 
       const user = validEmail && await UsersDAO.getUserByEmail(validEmail)
+      if (user) delete user.password
+
       return user
-        ? res.json({ status: 'success', data: { user: { email: user.email, roles: [] } } })
+        ? res.json({ status: 'success', data: { user } })
         : res.status(404).end()
     }
 

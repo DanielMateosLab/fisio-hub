@@ -1,18 +1,19 @@
-import { ProfessionalsData, ScheduleClasses } from '../../pages/schedule'
+import { ScheduleClasses } from '../../pages/schedule'
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
 import teal from '@material-ui/core/colors/teal'
 import Typography from '@material-ui/core/Typography'
+import { Professional } from '../../common/entityTypes'
 
 export interface ScheduleHeaderProps {
   classes: ScheduleClasses,
-  selectedProfessionals: ProfessionalsData[],
+  selectedProfessionals: Professional[],
 }
 
 const ScheduleMainHeader: React.FC<ScheduleHeaderProps> = ({ classes, selectedProfessionals }) => (
   <Grid id="header" item container xs>
     <Grid item container className={classes.timeColumn}>
-      <Grid item xs={9} container alignItems="flex-end"/>
+      <Grid item xs={9} alignItems="flex-end"/>
       <Grid item xs={3} style={{ borderBottom: `solid 1px ${teal['100']}` }}/>
     </Grid>
 
