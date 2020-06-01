@@ -78,6 +78,17 @@ const ResponsibleTable: React.FC<Props> = props => {
   const getSelectedProfessionals = () => props.selectedProfessionalsIds
     .map(_id => props.professionals.find(p => p._id === _id))
 
+  const headerScrollableContainer = React.createRef<HTMLDivElement>()
+  const contentScrollableContainer = React.createRef<HTMLDivElement>()
+
+  function handleScroll(event: React.UIEvent<HTMLDivElement>) {
+    const scrolledElement = event.currentTarget
+    const { scrollLeft } = scrolledElement
+
+    headerScrollableContainer.current && headerScrollableContainer.current.scrollTo({ left: scrollLeft })
+    contentScrollableContainer.current && contentScrollableContainer.current.scrollTo({ left: scrollLeft })
+  }
+
   return (
     <>
       <Grid item xs={12} container className={classes.topHeader}>
@@ -86,7 +97,15 @@ const ResponsibleTable: React.FC<Props> = props => {
           <Grid item xs={3} style={{ borderBottom: `solid 1px ${teal['100']}` }}/>
         </Grid>
 
-        <Grid item xs container wrap="nowrap" className={classes.topHeaderColumns}>
+        <Grid
+          item
+          xs
+          container
+          wrap="nowrap"
+          className={classes.topHeaderColumns}
+          ref={headerScrollableContainer}
+          onScrollCapture={handleScroll}
+        >
           { getSelectedProfessionals().map(professional => professional && (
             <Grid
               item
@@ -127,7 +146,15 @@ const ResponsibleTable: React.FC<Props> = props => {
           })() }
         </Grid>
 
-        <Grid item xs container wrap="nowrap" className={classes.columnContainer}>
+        <Grid
+          item
+          xs
+          container
+          wrap="nowrap"
+          className={classes.columnContainer}
+          ref={contentScrollableContainer}
+          onScrollCapture={handleScroll}
+        >
           {
             getSelectedProfessionals().map(professional => professional && (
               <div key={`column.${professional._id}`} className={classes.column}>
