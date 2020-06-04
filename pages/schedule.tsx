@@ -44,7 +44,8 @@ export default () => {
     professionals[0]._id,
     professionals[1]._id,
     professionals[2]._id,
-    professionals[3]._id
+    professionals[3]._id,
+    professionals[4]._id
   ])
 
   // const gapMinutes = 60

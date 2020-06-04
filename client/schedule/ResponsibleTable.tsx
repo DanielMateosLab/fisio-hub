@@ -6,38 +6,43 @@ import { Professional } from '../../common/entityTypes'
 import { ObjectId } from 'bson'
 import { Moment } from 'moment'
 import Typography from '@material-ui/core/Typography'
+import { ChevronLeft, ChevronRight } from '@material-ui/icons'
+import Button from '@material-ui/core/Button'
 
 const headerHeight = 48
 const itemHeight = 72
 const itemWidth = 340
 const borderStyle = `solid 1px ${teal['100']}`
 
+const columnBorder = {
+  borderLeft: borderStyle,
+  marginLeft: -1
+}
+
 const useStyles = makeStyles({
   topHeader: {
     height: headerHeight
   },
   topHeaderColumns: {
-    overflowX: 'scroll',
-    '&::-webkit-scrollbar': {
-      display: 'none'
-    }
+    overflowX: 'hidden'
   },
   topHeaderText: {
     borderBottom: borderStyle,
-    borderLeft: borderStyle,
     width: itemWidth,
-    flex: '0 0 auto'
+    flex: '0 0 auto',
+    ...columnBorder
   },
   main: {
     height: 'calc(100vh - 136px)',
     overflowY: 'auto'
   },
   leftHeader: {
+    borderRight: borderStyle,
     width: 48
   },
   columnContainer: {
     overflowX: 'auto',
-    borderLeft: borderStyle
+    scrollBehavior: 'smooth'
   },
   timeCaption: {
     position: 'relative',
@@ -49,8 +54,20 @@ const useStyles = makeStyles({
   },
   column: {
     width: itemWidth,
-    borderRight: borderStyle,
     flex: '0 0 auto',
+    ...columnBorder
+  },
+  scrollButtons: {
+    position: 'absolute',
+    bottom: 24,
+    right: 0,
+    zIndex: 3,
+    '& button': {
+      marginRight: 24,
+      padding: 0,
+      minWidth: 0,
+      borderRadius: '50%'
+    }
   }
 })
 
@@ -86,7 +103,22 @@ const ResponsibleTable: React.FC<Props> = props => {
     const { scrollLeft } = scrolledElement
 
     headerScrollableContainer.current && headerScrollableContainer.current.scrollTo({ left: scrollLeft })
-    contentScrollableContainer.current && contentScrollableContainer.current.scrollTo({ left: scrollLeft })
+  }
+
+  function scrollOneColumn(direction: 'left' | 'right') {
+    if (!contentScrollableContainer.current) return
+
+    const { current } = contentScrollableContainer
+    const { scrollLeft } = contentScrollableContainer.current
+
+    const scrollRemainder = scrollLeft % itemWidth
+
+    // If a column is just a bit scrolled, scroll is completed; otherwise, an additional column is scrolled
+    const scrollAmendment = scrollRemainder < itemWidth / 2 ? -scrollRemainder : itemWidth - scrollRemainder
+
+    const scrollChange = scrollAmendment + direction === 'left' ? -itemWidth : itemWidth
+
+    current.scrollTo({ left: scrollLeft + scrollChange })
   }
 
   return (
@@ -104,7 +136,6 @@ const ResponsibleTable: React.FC<Props> = props => {
           wrap="nowrap"
           className={classes.topHeaderColumns}
           ref={headerScrollableContainer}
-          onScrollCapture={handleScroll}
         >
           { getSelectedProfessionals().map(professional => professional && (
             <Grid
@@ -121,6 +152,9 @@ const ResponsibleTable: React.FC<Props> = props => {
             </Grid>
           )) }
         </Grid>
+
+        {/* Avoids top header to be scrolled more than content due to the scrollbar width */}
+        <div style={{ width: 16 }}/>
       </Grid>
 
       <Grid item className={classes.main} container xs={12}>
@@ -164,6 +198,15 @@ const ResponsibleTable: React.FC<Props> = props => {
           }
         </Grid>
       </Grid>
+
+      <div className={classes.scrollButtons}>
+        <Button variant="contained" color="secondary" onClick={() => scrollOneColumn('left')}>
+          <ChevronLeft fontSize="large"/>
+        </Button>
+        <Button variant="contained" color="secondary" onClick={() => scrollOneColumn('right')}>
+          <ChevronRight fontSize="large"/>
+        </Button>
+      </div>
     </>
   )
 }
