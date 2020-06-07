@@ -1,13 +1,14 @@
 import Grid from '@material-ui/core/Grid'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import teal from '@material-ui/core/colors/teal'
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { Professional } from '../../common/entityTypes'
 import { ObjectId } from 'bson'
-import { Moment } from 'moment'
+import moment, { Moment } from 'moment'
 import Typography from '@material-ui/core/Typography'
 import { ChevronLeft, ChevronRight } from '@material-ui/icons'
 import Button from '@material-ui/core/Button'
+import TimeLine from './TimeLine'
 
 const headerHeight = 48
 const itemHeight = 72
@@ -15,8 +16,7 @@ const itemWidth = 340
 const borderStyle = `solid 1px ${teal['100']}`
 
 const columnBorder = {
-  borderLeft: borderStyle,
-  marginLeft: -1
+  borderLeft: borderStyle
 }
 
 const useStyles = makeStyles({
@@ -24,12 +24,13 @@ const useStyles = makeStyles({
     height: headerHeight
   },
   topHeaderColumns: {
-    overflowX: 'hidden'
+    overflowX: 'hidden',
+    marginLeft: -1
   },
   topHeaderText: {
     borderBottom: borderStyle,
-    width: itemWidth,
-    flex: '0 0 auto',
+    minWidth: itemWidth,
+    flex: '1 1 auto',
     ...columnBorder
   },
   main: {
@@ -42,7 +43,8 @@ const useStyles = makeStyles({
   },
   columnContainer: {
     overflowX: 'auto',
-    scrollBehavior: 'smooth'
+    scrollBehavior: 'smooth',
+    marginLeft: -1
   },
   timeCaption: {
     position: 'relative',
@@ -53,8 +55,8 @@ const useStyles = makeStyles({
     height: itemHeight
   },
   column: {
-    width: itemWidth,
-    flex: '0 0 auto',
+    minWidth: itemWidth,
+    flex: '1 1 auto',
     ...columnBorder
   },
   scrollButtons: {
@@ -95,21 +97,29 @@ const ResponsibleTable: React.FC<Props> = props => {
   const getSelectedProfessionals = () => props.selectedProfessionalsIds
     .map(_id => props.professionals.find(p => p._id === _id))
 
-  const headerScrollableContainer = React.createRef<HTMLDivElement>()
-  const contentScrollableContainer = React.createRef<HTMLDivElement>()
+  const [ scrollX, setScrollX ] = useState(0)
+  // The initial state is a false value that prevents the arrows to be flash-displayed on mount
+  const [ contentClientWidth, setContentClientWidth ] = useState(getSelectedProfessionals().length * itemWidth + 1)
+
+  const headerColumnsContainer = React.createRef<HTMLDivElement>()
+  const contentMainContainer = React.createRef<HTMLDivElement>()
+  const contentColumnsContainer = React.createRef<HTMLDivElement>()
 
   function handleScroll(event: React.UIEvent<HTMLDivElement>) {
     const scrolledElement = event.currentTarget
     const { scrollLeft } = scrolledElement
 
-    headerScrollableContainer.current && headerScrollableContainer.current.scrollTo({ left: scrollLeft })
+    setScrollX(scrollLeft)
+    setContentClientWidth(event.currentTarget.clientWidth)
+
+    headerColumnsContainer.current && headerColumnsContainer.current.scrollTo({ left: scrollLeft })
   }
 
   function scrollOneColumn(direction: 'left' | 'right') {
-    if (!contentScrollableContainer.current) return
+    if (!contentColumnsContainer.current) return
 
-    const { current } = contentScrollableContainer
-    const { scrollLeft } = contentScrollableContainer.current
+    const { current } = contentColumnsContainer
+    const { scrollLeft } = contentColumnsContainer.current
 
     const scrollRemainder = scrollLeft % itemWidth
 
@@ -121,9 +131,33 @@ const ResponsibleTable: React.FC<Props> = props => {
     current.scrollTo({ left: scrollLeft + scrollChange })
   }
 
+  const isLeftArrowDisabled = scrollX == 0
+  const isRightArrowDisabled = scrollX + contentClientWidth == getSelectedProfessionals().length * itemWidth
+  console.log(scrollX + contentClientWidth, getSelectedProfessionals().length * itemWidth)
+
+  const [ time, setTime ] = useState(moment())
+
+  useEffect(() => {
+    setTimeout(() => {
+      const actualTime = moment()
+      actualTime.add(1, 'minute')
+      setTime(actualTime)
+    }, 60000)
+  }, [ time ])
+
+
+  const timeLinePosition = time.hour() * (60 / gapMinutes) * itemHeight + time.minute() * ( itemHeight / gapMinutes )
+
+  useEffect(() => {
+    contentMainContainer.current && contentMainContainer.current.scrollTo({ top: timeLinePosition - itemHeight * 2 })
+
+    // Set initial client width, needed for correct arrows display
+    contentColumnsContainer.current && setContentClientWidth(contentColumnsContainer.current.clientWidth)
+  }, [])
+
   return (
     <>
-      <Grid item xs={12} container className={classes.topHeader}>
+      <Grid item container className={classes.topHeader}>
         <Grid item container className={classes.leftHeader}>
           <Grid item xs={9}/>
           <Grid item xs={3} style={{ borderBottom: `solid 1px ${teal['100']}` }}/>
@@ -135,7 +169,7 @@ const ResponsibleTable: React.FC<Props> = props => {
           container
           wrap="nowrap"
           className={classes.topHeaderColumns}
-          ref={headerScrollableContainer}
+          ref={headerColumnsContainer}
         >
           { getSelectedProfessionals().map(professional => professional && (
             <Grid
@@ -157,7 +191,9 @@ const ResponsibleTable: React.FC<Props> = props => {
         <div style={{ width: 16 }}/>
       </Grid>
 
-      <Grid item className={classes.main} container xs={12}>
+      <Grid item className={classes.main} container ref={contentMainContainer}>
+        <TimeLine {...{time, timeLinePosition}} />
+
         <Grid item className={classes.leftHeader}>
           { (() => {
             let timeItems: ReactNode[] = []
@@ -186,27 +222,39 @@ const ResponsibleTable: React.FC<Props> = props => {
           container
           wrap="nowrap"
           className={classes.columnContainer}
-          ref={contentScrollableContainer}
+          ref={contentColumnsContainer}
           onScrollCapture={handleScroll}
         >
           {
             getSelectedProfessionals().map(professional => professional && (
-              <div key={`column.${professional._id}`} className={classes.column}>
-
+              <div
+                key={`column.${professional._id}`}
+                className={classes.column}
+              >
               </div>
             ))
           }
         </Grid>
       </Grid>
 
-      <div className={classes.scrollButtons}>
-        <Button variant="contained" color="secondary" onClick={() => scrollOneColumn('left')}>
+      { getSelectedProfessionals().length * itemWidth > contentClientWidth && <div className={classes.scrollButtons}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => scrollOneColumn('left')}
+          disabled={isLeftArrowDisabled}
+        >
           <ChevronLeft fontSize="large"/>
         </Button>
-        <Button variant="contained" color="secondary" onClick={() => scrollOneColumn('right')}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => scrollOneColumn('right')}
+          disabled={isRightArrowDisabled}
+        >
           <ChevronRight fontSize="large"/>
         </Button>
-      </div>
+      </div>}
     </>
   )
 }

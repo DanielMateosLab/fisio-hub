@@ -45,7 +45,6 @@ export default () => {
     professionals[1]._id,
     professionals[2]._id,
     professionals[3]._id,
-    professionals[4]._id
   ])
 
   // const gapMinutes = 60
@@ -113,7 +112,7 @@ export default () => {
       </Grid>
 
       <Grid item xs container style={{ maxWidth: 'calc(100vw - 240px)'}}>
-      < ResponsibleTable {...{ professionals, selectedProfessionalsIds, selectedDate: moment() }}/>
+        <ResponsibleTable {...{ professionals, selectedProfessionalsIds, selectedDate: moment() }}/>
       </Grid>
 
     </Grid>
