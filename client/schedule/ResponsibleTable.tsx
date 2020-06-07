@@ -116,7 +116,7 @@ const ResponsibleTable: React.FC<Props> = props => {
     // If a column is just a bit scrolled, scroll is completed; otherwise, an additional column is scrolled
     const scrollAmendment = scrollRemainder < itemWidth / 2 ? -scrollRemainder : itemWidth - scrollRemainder
 
-    const scrollChange = scrollAmendment + direction === 'left' ? -itemWidth : itemWidth
+    const scrollChange = scrollAmendment + (direction === 'left' ? -itemWidth : itemWidth)
 
     current.scrollTo({ left: scrollLeft + scrollChange })
   }
