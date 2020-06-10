@@ -133,16 +133,15 @@ const ResponsibleTable: React.FC<Props> = props => {
 
   const isLeftArrowDisabled = scrollX == 0
   const isRightArrowDisabled = scrollX + contentClientWidth == getSelectedProfessionals().length * itemWidth
-  console.log(scrollX + contentClientWidth, getSelectedProfessionals().length * itemWidth)
 
   const [ time, setTime ] = useState(moment())
 
   useEffect(() => {
+    const actualTime = moment()
     setTimeout(() => {
-      const actualTime = moment()
       actualTime.add(1, 'minute')
       setTime(actualTime)
-    }, 60000)
+    }, 60000 - actualTime.seconds() * 1000)
   }, [ time ])
 
 
