@@ -73,6 +73,10 @@ const useStyles = makeStyles({
   gap: {
     height: itemHeight,
     borderBottom: `solid 1px ${teal['100']}`
+  },
+  whiteShadow: {
+    zIndex: 2,
+    boxShadow: '-8px 8px 8px white'
   }
 })
 
@@ -84,9 +88,6 @@ interface Props {
 
 const ResponsibleTable: React.FC<Props> = props => {
   const classes = useStyles()
-
-  // This will be a prop: the selected date
-  const date = moment()
 
   const gapMinutes = 60
   const gapCount = 24 * 60 / gapMinutes
@@ -165,7 +166,7 @@ const ResponsibleTable: React.FC<Props> = props => {
   return (
     <>
       <Grid item container className={classes.topHeader}>
-        <Grid item container className={classes.leftHeader}>
+        <Grid item container className={`${classes.leftHeader} ${classes.whiteShadow}`}>
           <Grid item xs={9}/>
           <Grid item xs={3} style={{ borderBottom: darkBorderStyle }}/>
         </Grid>

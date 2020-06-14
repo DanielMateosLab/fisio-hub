@@ -41,17 +41,9 @@ export default () => {
 
   const professionals = require('../client/schedule/mockData').professionals
   const [ selectedProfessionalsIds, setSelected ] = useState<ObjectId[]>([
-    professionals[0]._id,
-    professionals[1]._id,
-    professionals[2]._id,
-    professionals[3]._id,
+    professionals[0]._id
   ])
 
-  // const gapMinutes = 60
-  // const gapCount = 24 * 60 / gapMinutes
-  //
-  // const date = moment()
-  //
   // function getGapDate(i: number) {
   //   const gapDate = date.clone()
   //   gapDate.hour(Math.trunc(i * gapMinutes / 60 ))
@@ -60,24 +52,6 @@ export default () => {
   // }
   //
   // const getGapTime = (i: number) => getGapDate(i).format('HH:mm')
-  //
-  // const getTimeLinePosition = (time: Moment) => {
-  //   const hoursPosition = time.hour() * (60 / gapMinutes) * gapHeight
-  //   const minutesPosition = (time.minute()) * ( gapHeight / gapMinutes )
-  //
-  //   return hoursPosition + minutesPosition
-  // }
-  //
-  // const [ time, setTime ] = useState(moment())
-  // const timeLinePosition = getTimeLinePosition(time)
-  //
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     const actualTime = moment()
-  //     actualTime.add(1, 'minute')
-  //     setTime(actualTime)
-  //   }, 60000)
-  // }, [ time ])
   //
   // let gaps: ReactNode[] = []
   // let hourGaps: ReactNode[] = []
