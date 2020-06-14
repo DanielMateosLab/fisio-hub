@@ -26,7 +26,7 @@ const EmptyGapButton: React.FC<Props> = ({ timeText, showTimeInEmptyGaps }) => {
   const classes = useStyles()
 
   return (
-    <ListItem button className={ showTimeInEmptyGaps ? classes.dynamicGapButton : '' } >
+    <ListItem button className={ showTimeInEmptyGaps ? '' : classes.dynamicGapButton } >
       <ListItemText
         primary={timeText}
         primaryTypographyProps={{ align: 'center', color: 'primary', variant: 'overline' }}

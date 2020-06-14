@@ -9,15 +9,15 @@ import Typography from '@material-ui/core/Typography'
 import { ChevronLeft, ChevronRight } from '@material-ui/icons'
 import Button from '@material-ui/core/Button'
 import TimeLine from './TimeLine'
+import AppointmentCard from './AppointmentCard'
+import EmptyGapButton from './EmptyGapButton'
+import { mockAppointment } from '../../__test__/testUtils'
 
 const headerHeight = 48
 const itemHeight = 72
 const itemWidth = 340
 const borderStyle = `solid 1px ${teal['100']}`
-
-const columnBorder = {
-  borderLeft: borderStyle
-}
+const darkBorderStyle = `solid 1px ${teal['300']}`
 
 const useStyles = makeStyles({
   topHeader: {
@@ -28,17 +28,16 @@ const useStyles = makeStyles({
     marginLeft: -1
   },
   topHeaderText: {
-    borderBottom: borderStyle,
+    borderBottom: darkBorderStyle,
     minWidth: itemWidth,
     flex: '1 1 auto',
-    ...columnBorder
+    borderLeft: borderStyle
   },
   main: {
     height: 'calc(100vh - 136px)',
     overflowY: 'auto'
   },
   leftHeader: {
-    borderRight: borderStyle,
     width: 48
   },
   columnContainer: {
@@ -57,7 +56,7 @@ const useStyles = makeStyles({
   column: {
     minWidth: itemWidth,
     flex: '1 1 auto',
-    ...columnBorder
+    borderLeft: borderStyle
   },
   scrollButtons: {
     position: 'absolute',
@@ -70,6 +69,10 @@ const useStyles = makeStyles({
       minWidth: 0,
       borderRadius: '50%'
     }
+  },
+  gap: {
+    height: itemHeight,
+    borderBottom: `solid 1px ${teal['100']}`
   }
 })
 
@@ -81,6 +84,9 @@ interface Props {
 
 const ResponsibleTable: React.FC<Props> = props => {
   const classes = useStyles()
+
+  // This will be a prop: the selected date
+  const date = moment()
 
   const gapMinutes = 60
   const gapCount = 24 * 60 / gapMinutes
@@ -154,12 +160,14 @@ const ResponsibleTable: React.FC<Props> = props => {
     contentColumnsContainer.current && setContentClientWidth(contentColumnsContainer.current.clientWidth)
   }, [])
 
+  const showLeftHeaderTimeCaptions = getSelectedProfessionals().length <= 1
+
   return (
     <>
       <Grid item container className={classes.topHeader}>
         <Grid item container className={classes.leftHeader}>
           <Grid item xs={9}/>
-          <Grid item xs={3} style={{ borderBottom: `solid 1px ${teal['100']}` }}/>
+          <Grid item xs={3} style={{ borderBottom: darkBorderStyle }}/>
         </Grid>
 
         <Grid
@@ -184,6 +192,10 @@ const ResponsibleTable: React.FC<Props> = props => {
               </Typography>
             </Grid>
           )) }
+        {/* Header placeholder */}
+          { !getSelectedProfessionals().length &&
+            <Grid item container alignItems="center" justify="center" className={classes.topHeaderText}/>
+          }
         </Grid>
 
         {/* Avoids top header to be scrolled more than content due to the scrollbar width */}
@@ -203,7 +215,7 @@ const ResponsibleTable: React.FC<Props> = props => {
                 <Grid item xs={12} container key={timeHeaderValue}>
                   <Grid item xs={9}>
                     <Typography className={classes.timeCaption} color="primary" variant="caption">
-                      { i > 0 && timeHeaderValue }
+                      { showLeftHeaderTimeCaptions && timeHeaderValue }
                     </Typography>
                   </Grid>
                   <Grid item xs={3} className={classes.timeDecoration}/>
@@ -226,13 +238,38 @@ const ResponsibleTable: React.FC<Props> = props => {
         >
           {
             getSelectedProfessionals().map(professional => professional && (
-              <div
-                key={`column.${professional._id}`}
-                className={classes.column}
-              >
+              <div key={`column.${professional._id}`} className={classes.column}>
+                {(() => {
+                  let appointmentGaps: React.ReactNode[] = []
+                  for (let i = 0; i < gapCount; i++) {
+                    appointmentGaps.push(
+                      <Grid item container className={classes.gap} key={`${professional._id}.${i}`}>
+                        { i == 20 ? <AppointmentCard appointment={mockAppointment} /> :
+                          <EmptyGapButton
+                            timeText={getGapDate(i).format("HH:mm")}
+                            showTimeInEmptyGaps={!showLeftHeaderTimeCaptions}
+                          />
+                        }
+                      </Grid>
+                    )}
+                  return appointmentGaps
+                })()}
               </div>
             ))
           }
+          {/* Body placeholder */}
+          { !getSelectedProfessionals().length && (
+            <div className={classes.column}>
+              {(() => {
+                let appointmentGaps: React.ReactNode[] = []
+                for (let i = 0; i < gapCount; i++) {
+                  appointmentGaps.push(
+                    <Grid item container className={classes.gap} key={`noProfessionalGap.${i}`} />
+                  )}
+                return appointmentGaps
+              })()}
+            </div>
+          ) }
         </Grid>
       </Grid>
 
