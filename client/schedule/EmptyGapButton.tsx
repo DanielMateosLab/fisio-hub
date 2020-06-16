@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     '& div': {
       display: 'none'
     },
-    '&:hover div': {
+    '&:hover div, &:focus div': {
       display: 'block',
     }
   }
