@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   },
   whiteShadow: {
     zIndex: 2,
-    boxShadow: '-8px 8px 8px white'
+    boxShadow: '-2px 8px 6px -2px white'
   }
 })
 
@@ -42,8 +42,8 @@ const ScheduleHeader: React.FC<Props> = ({ headerColumnsContainer, selectedProfe
 
   return (
     <Grid item container className={classes.topHeader}>
-      <Grid item container className={classes.whiteShadow} style={{ width: leftHeaderWidth }}>
-        <Grid item xs={9}/>
+      <Grid item container style={{ width: leftHeaderWidth }}>
+        <Grid item xs={9} className={classes.whiteShadow}/>
         <Grid item xs={3} className={classes.headerTimeDecoration}/>
       </Grid>
 
