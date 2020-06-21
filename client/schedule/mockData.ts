@@ -74,6 +74,14 @@ export const professionals: Professional[] = [
     email: 'a@a.com',
     firstName: 'Paula',
     lastName: 'Téllez Blanco'
+  },
+  {
+    _id: new ObjectID(),
+    center_id: 'mock0',
+    isAdmin: true,
+    email: 'a@a.com',
+    firstName: 'Paula',
+    lastName: 'Téllez Blanco'
   }
 ]
 

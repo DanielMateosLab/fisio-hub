@@ -4,7 +4,7 @@ import Grid from '@material-ui/core/Grid'
 import ScheduleMenu from '../client/schedule/ScheduleMenu'
 import moment from 'moment'
 import { ObjectId } from 'bson'
-import Schedule from '../client/schedule/Schedule'
+import ScheduleMain from '../client/schedule/ScheduleMain'
 
 const useStyles = makeStyles({
   pageContainer: { paddingTop: 24 },
@@ -21,7 +21,12 @@ export default () => {
 
   const professionals = require('../client/schedule/mockData').professionals
   const [ selectedProfessionalsIds, setSelected ] = useState<ObjectId[]>([
-    professionals[0]._id
+    professionals[0]._id,
+    professionals[1]._id,
+    professionals[2]._id,
+    professionals[3]._id,
+    professionals[4]._id,
+    professionals[5]._id
   ])
 
   return (
@@ -31,7 +36,7 @@ export default () => {
       </Grid>
 
       <Grid item xs container className={classes.schedule}>
-        <Schedule {...{ professionals, selectedProfessionalsIds, selectedDate: moment() }}/>
+        <ScheduleMain {...{ professionals, selectedProfessionalsIds, selectedDate: moment() }}/>
       </Grid>
     </Grid>
   )
