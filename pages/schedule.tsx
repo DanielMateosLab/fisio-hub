@@ -12,8 +12,7 @@ const useStyles = makeStyles({
     overflowY: 'auto',
     height: 'calc(100vh - 88px)',
     width: 240
-  },
-  schedule: { maxWidth: 'calc(100vw - 240px)' }
+  }
 })
 
 export default () => {
@@ -35,9 +34,7 @@ export default () => {
         <ScheduleMenu {...{ professionals, setSelected, selectedProfessionals: selectedProfessionalsIds }}/>
       </Grid>
 
-      <Grid item xs container className={classes.schedule}>
-        <ScheduleMain {...{ professionals, selectedProfessionalsIds, selectedDate: moment() }}/>
-      </Grid>
+      <ScheduleMain {...{ professionals, selectedProfessionalsIds, selectedDate: moment() }}/>
     </Grid>
   )
 }

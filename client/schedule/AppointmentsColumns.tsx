@@ -8,6 +8,7 @@ import { borderStyle, itemHeight, itemWidth } from './cssValues'
 import teal from '@material-ui/core/colors/teal'
 import { Professional } from '../../common/entityTypes'
 import { Moment } from 'moment'
+import HeaderGap from './HeaderGap'
 
 const useStyles = makeStyles({
   columnContainer: {
@@ -28,11 +29,11 @@ const useStyles = makeStyles({
 
 interface Props {
   contentColumnsContainer: React.RefObject<HTMLDivElement>
-  handleScroll: (event: any) => void
   selectedProfessionals: Array<Professional | undefined>
   gapCount: number
   getGapDate: (i: number) => Moment
   showLeftHeaderTimeCaptions: boolean
+  scrollTop: number
 }
 
 const AppointmentsColumns: React.FC<Props> = props => {
@@ -46,11 +47,12 @@ const AppointmentsColumns: React.FC<Props> = props => {
       wrap="nowrap"
       className={classes.columnContainer}
       ref={props.contentColumnsContainer}
-      onScrollCapture={props.handleScroll}
     >
       {
         props.selectedProfessionals.map(professional => professional && (
           <div key={`column.${professional._id}`} className={classes.column}>
+            <HeaderGap {...{ professional, scrollTop: props.scrollTop }}/>
+            
             {(() => {
               let appointmentGaps: React.ReactNode[] = []
               for (let i = 0; i < props.gapCount; i++) {

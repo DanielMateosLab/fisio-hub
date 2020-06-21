@@ -1,4 +1,4 @@
-import { borderStyle, itemHeight, leftHeaderWidth } from './cssValues'
+import { borderStyle, darkBorderStyle, headerHeight, itemHeight, leftHeaderWidth } from './cssValues'
 import React, { ReactNode } from 'react'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -12,8 +12,18 @@ const useStyles = makeStyles({
   timeDecoration: {
     borderBottom: borderStyle,
     height: itemHeight
-  }
-})
+  },
+  headerGap: {
+    height: headerHeight
+  },
+  headerTimeDecoration: {
+    borderBottom: darkBorderStyle,
+  },
+  timeColumn: {
+    width: leftHeaderWidth,
+    borderRight: borderStyle,
+    zIndex: 3
+  }})
 
 interface Props {
   gapCount: number
@@ -25,7 +35,12 @@ const TimeColumn: React.FC<Props> = ({ gapCount, getGapTime, showLeftHeaderTimeC
   const classes = useStyles()
 
   return (
-    <Grid item style={{ width: leftHeaderWidth }}>
+    <Grid item className={classes.timeColumn}>
+      <Grid item container className={classes.headerGap}>
+        <Grid item xs={9}/>
+        <Grid item xs={3} className={classes.headerTimeDecoration}/>
+      </Grid>
+
       { (() => {
         let timeItems: ReactNode[] = []
 

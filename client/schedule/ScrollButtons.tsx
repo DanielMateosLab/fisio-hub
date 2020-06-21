@@ -20,8 +20,6 @@ const useStyles = makeStyles({
 
 interface Props {
   scrollOneColumn: (direction: 'left' | 'right') => void
-  isLeftArrowDisabled: boolean
-  isRightArrowDisabled: boolean
 }
 
 const ScrollButtons: React.FC<Props> = props => {
@@ -33,7 +31,6 @@ const ScrollButtons: React.FC<Props> = props => {
         variant="contained"
         color="secondary"
         onClick={() => props.scrollOneColumn('left')}
-        disabled={props.isLeftArrowDisabled}
       >
         <ChevronLeft fontSize="large"/>
       </Button>
@@ -41,7 +38,6 @@ const ScrollButtons: React.FC<Props> = props => {
         variant="contained"
         color="secondary"
         onClick={() => props.scrollOneColumn('right')}
-        disabled={props.isRightArrowDisabled}
       >
         <ChevronRight fontSize="large"/>
       </Button>
