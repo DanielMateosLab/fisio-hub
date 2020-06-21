@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Professional } from '../../common/entityTypes'
 import { ObjectId } from 'bson'
 import { Moment } from 'moment'
-import ScheduleHeader from './ScheduleHeader'
 import ScrollButtons from './ScrollButtons'
 import { itemWidth } from './cssValues'
 import ScheduleBody from './ScheduleBody'
@@ -13,7 +12,7 @@ interface Props {
   selectedDate: Moment
 }
 
-const Schedule: React.FC<Props> = ({ professionals, selectedProfessionalsIds, selectedDate }) => {
+const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds, selectedDate }) => {
 
   const selectedProfessionals = selectedProfessionalsIds
     .map(_id => professionals.find(p => p._id === _id))
@@ -60,11 +59,6 @@ const Schedule: React.FC<Props> = ({ professionals, selectedProfessionalsIds, se
 
   return (
     <>
-      <ScheduleHeader
-        selectedProfessionals={selectedProfessionals}
-        headerColumnsContainer={headerColumnsContainer}
-      />
-
       <ScheduleBody {...{
         selectedDate,
         selectedProfessionals,
@@ -84,4 +78,4 @@ const Schedule: React.FC<Props> = ({ professionals, selectedProfessionalsIds, se
   )
 }
 
-export default Schedule
+export default ScheduleMain
