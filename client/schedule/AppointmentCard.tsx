@@ -32,20 +32,19 @@ interface Props {
   appointment: Appointment
 }
 
-const AppointmentCard: React.FC<Props> = ({appointment}) => {
+const AppointmentCard: React.FC<Props> = ({ appointment }) => {
   const classes = useStyles()
 
   const { date, patient, service, payment } = appointment
 
   return (
     <Paper className={classes.root}>
-      <Grid container spacing={2}>
+      <Grid container style={{ height: '100%' }}>
         <Grid item>
           <Typography color="textSecondary" variant="caption">
-            { moment(date).format("HH:mm") }
+            { moment(date).format("HH:mm") } {' '} { service.name }
           </Typography>
           <Typography color="primary" variant="subtitle2">{ `${patient.firstName} ${patient.lastName}` }</Typography>
-          <Typography variant="caption">{ service.name }</Typography>
         </Grid>
         { payment && (
           <Grid item xs container alignItems="center" justify="center">
