@@ -91,7 +91,7 @@ const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds
   useEffect(() => {
     contentMainContainer.current && gsap.to(contentMainContainer.current, {
       scrollTo: { y: timeLinePosition - itemHeight * 2 },
-      duration: 0.5,
+      duration: 1,
       ease: 'power2'
     })
   }, [])
