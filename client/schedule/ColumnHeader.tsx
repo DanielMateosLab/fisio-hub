@@ -37,7 +37,7 @@ const ColumnHeader: React.FC<Props> = props => {
     gsap.to(headerGap.current, { translateY: -scrollTop, duration: 0.25 })
     setTimeout(() => {
       headerGap.current && gsap.to(headerGap.current, { translateY: scrollTop, duration: 0.25 })
-    }, 20)
+    }, 5)
   }, [scrollTop])
 
   return (
