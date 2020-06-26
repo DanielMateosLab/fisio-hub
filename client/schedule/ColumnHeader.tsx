@@ -5,6 +5,8 @@ import makeStyles from '@material-ui/core/styles/makeStyles'
 import { borderStyle, darkBorderStyle, headerHeight, itemWidth } from './cssValues'
 import { Professional } from '../../common/entityTypes'
 import { gsap } from 'gsap'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/rootReducer'
 
 const useStyles = makeStyles({
   headerGap: {
@@ -21,21 +23,22 @@ const useStyles = makeStyles({
 })
 
 interface Props {
-  professional: Professional,
-  scrollTop: number
+  professional: Professional
 }
 
 const ColumnHeader: React.FC<Props> = props => {
   const classes = useStyles()
 
+  const scrollTop = useSelector((state: RootState) => state.schedule.scrollTop)
+
   const headerGap = React.createRef<HTMLDivElement>()
 
   useEffect(() => {
-    gsap.to(headerGap.current, { translateY: -props.scrollTop, duration: 0.25 })
+    gsap.to(headerGap.current, { translateY: -scrollTop, duration: 0.25 })
     setTimeout(() => {
-      headerGap.current && gsap.to(headerGap.current, { translateY: props.scrollTop, duration: 0.25 })
+      headerGap.current && gsap.to(headerGap.current, { translateY: scrollTop, duration: 0.25 })
     }, 20)
-  }, [props.scrollTop])
+  }, [scrollTop])
 
   return (
     <Grid

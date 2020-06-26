@@ -32,7 +32,6 @@ interface Props {
   gapCount: number
   getGapDate: (i: number) => Moment
   showLeftHeaderTimeCaptions: boolean
-  scrollTop: number
 }
 
 const AppointmentsColumns: React.FC<Props> = props => {
@@ -50,7 +49,7 @@ const AppointmentsColumns: React.FC<Props> = props => {
       {
         props.selectedProfessionals.map(professional => professional && (
           <div key={`column.${professional._id}`} className={classes.column}>
-            <ColumnHeader {...{ professional, scrollTop: props.scrollTop }}/>
+            <ColumnHeader professional={professional}/>
             
             {(() => {
               let appointmentGaps: React.ReactNode[] = []

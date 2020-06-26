@@ -11,6 +11,8 @@ import Grid from '@material-ui/core/Grid'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+import { useDispatch } from 'react-redux'
+import { setScrollTop } from '../redux/scheduleSlice'
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -94,11 +96,9 @@ const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds
     })
   }, [])
 
-  // TODO: this makes the Y scrolling slow. Find an alternative way that does not trigger that much state updates
-  // Pass directly the ref?
-  const [ scrollTop, setScrollTop ] = useState(0)
-
   const showLeftHeaderTimeCaptions = selectedProfessionals.length <= 1
+
+  const dispatch = useDispatch()
 
   return (
     <Grid
@@ -107,7 +107,7 @@ const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds
       className={classes.main}
       container
       ref={contentMainContainer}
-      onScrollCapture={event => setScrollTop(event.currentTarget.scrollTop)}
+      onScrollCapture={event => dispatch(setScrollTop(event.currentTarget.scrollTop))}
     >
       <TimeLine {...{time, timeLinePosition}} />
 
@@ -118,8 +118,7 @@ const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds
         selectedProfessionals,
         gapCount,
         getGapDate,
-        showLeftHeaderTimeCaptions,
-        scrollTop
+        showLeftHeaderTimeCaptions
       }}/>
 
       { selectedProfessionals.length * itemWidth > contentClientWidth &&
