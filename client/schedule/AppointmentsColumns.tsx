@@ -8,12 +8,11 @@ import { borderStyle, itemHeight, itemWidth } from './cssValues'
 import teal from '@material-ui/core/colors/teal'
 import { Professional } from '../../common/entityTypes'
 import { Moment } from 'moment'
-import HeaderGap from './HeaderGap'
+import ColumnHeader from './ColumnHeader'
 
 const useStyles = makeStyles({
   columnContainer: {
     overflowX: 'auto',
-    scrollBehavior: 'smooth',
     marginLeft: -1
   },
   column: {
@@ -51,7 +50,7 @@ const AppointmentsColumns: React.FC<Props> = props => {
       {
         props.selectedProfessionals.map(professional => professional && (
           <div key={`column.${professional._id}`} className={classes.column}>
-            <HeaderGap {...{ professional, scrollTop: props.scrollTop }}/>
+            <ColumnHeader {...{ professional, scrollTop: props.scrollTop }}/>
             
             {(() => {
               let appointmentGaps: React.ReactNode[] = []

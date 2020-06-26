@@ -25,7 +25,7 @@ interface Props {
   scrollTop: number
 }
 
-const HeaderGap: React.FC<Props> = props => {
+const ColumnHeader: React.FC<Props> = props => {
   const classes = useStyles()
 
   const headerGap = React.createRef<HTMLDivElement>()
@@ -33,8 +33,8 @@ const HeaderGap: React.FC<Props> = props => {
   useEffect(() => {
     gsap.to(headerGap.current, { translateY: -props.scrollTop, duration: 0.25 })
     setTimeout(() => {
-      gsap.to(headerGap.current, { translateY: props.scrollTop, duration: 0.25 })
-    }, 50)
+      headerGap.current && gsap.to(headerGap.current, { translateY: props.scrollTop, duration: 0.25 })
+    }, 20)
   }, [props.scrollTop])
 
   return (
@@ -54,4 +54,4 @@ const HeaderGap: React.FC<Props> = props => {
   )
 }
 
-export default HeaderGap
+export default ColumnHeader

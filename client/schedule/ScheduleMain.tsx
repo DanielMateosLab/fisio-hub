@@ -3,13 +3,16 @@ import { Professional } from '../../common/entityTypes'
 import { ObjectId } from 'bson'
 import moment, { Moment } from 'moment'
 import ScrollButtons from './ScrollButtons'
-import { itemHeight, itemWidth } from './cssValues'
+import { headerHeight, itemHeight, itemWidth } from './cssValues'
 import TimeLine from './TimeLine'
 import TimeColumn from './TimeColumn'
 import AppointmentsColumns from './AppointmentsColumns'
 import Grid from '@material-ui/core/Grid'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import { gsap } from 'gsap'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 
+gsap.registerPlugin(ScrollToPlugin)
 
 const useStyles = makeStyles({
   main: {
@@ -49,7 +52,7 @@ const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds
 
     const scrollChange = scrollAmendment + (direction === 'left' ? -itemWidth : itemWidth)
 
-    current.scrollTo({ left: scrollLeft + scrollChange })
+    gsap.to(current, { scrollTo: { x: scrollLeft + scrollChange }, duration: 0.5, ease: 'power2' })
   }
 
   useEffect(() => {
@@ -80,13 +83,19 @@ const ScheduleMain: React.FC<Props> = ({ professionals, selectedProfessionalsIds
     }, 60000 - actualTime.seconds() * 1000)
   }, [ time ])
 
-  const timeLinePosition = time.hour() * (60 / gapMinutes) * itemHeight + time.minute() * ( itemHeight / gapMinutes )
+  const timeLinePosition = time.hour() * (60 / gapMinutes) * itemHeight + time.minute() * ( itemHeight / gapMinutes ) + headerHeight
 
   // Scroll to actual time on component mount
   useEffect(() => {
-    contentMainContainer.current && contentMainContainer.current.scrollTo({ top: timeLinePosition - itemHeight * 2 })
+    contentMainContainer.current && gsap.to(contentMainContainer.current, {
+      scrollTo: { y: timeLinePosition - itemHeight * 2 },
+      duration: 0.5,
+      ease: 'power2'
+    })
   }, [])
 
+  // TODO: this makes the Y scrolling slow. Find an alternative way that does not trigger that much state updates
+  // Pass directly the ref?
   const [ scrollTop, setScrollTop ] = useState(0)
 
   const showLeftHeaderTimeCaptions = selectedProfessionals.length <= 1
