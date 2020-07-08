@@ -61,25 +61,22 @@ const AppointmentCard: React.FC<Props> = ({ appointment }) => {
   return (
     <Paper className={classes.root} ref={card}>
       <Grid container style={{ height: '100%' }} spacing={2}>
-        <Grid item container>
-          <Grid item xs={12} container alignItems="center">
+        <Grid item container xs={9} justify="center">
+          <Grid item xs={12}>
             <Typography color="textSecondary" variant="caption">
               { moment(date).format("HH:mm") } {' '} { service.name }
             </Typography>
-            <Grid item xs />
-            <Message fontSize="small" />
-            { payment && <Euro style={{ color: green['500'] }} fontSize="small"/> }
           </Grid>
+
           <Grid item xs={12}>
-            <Typography color="primary" variant={ largeCard ? 'h5' : 'subtitle2' }>{ 'a'.padEnd(25, 'b') }</Typography>
+            <Typography color="primary" variant={ largeCard ? 'body1' : 'body2' }>{ patientName }</Typography>
           </Grid>
         </Grid>
-        { largeCard && (
-          <Grid item xs container alignItems="center">
-            <Message fontSize="large"/>
-            { payment && <Euro style={{ color: green['500'] }} fontSize="large"/> }
-          </Grid>
-        ) }
+
+        <Grid item xs={3} container justify="flex-end" alignItems={largeCard ? 'center' : 'flex-start'}>
+          <Message fontSize={largeCard ? 'large' : 'small'} />
+          { payment && <Euro style={{ color: green['500'] }} fontSize={largeCard ? 'large' : 'small'}/> }
+        </Grid>
       </Grid>
     </Paper>
   )
