@@ -7,6 +7,16 @@ import Container from '@material-ui/core/Container'
 import React from 'react'
 import { Professional } from '../../common/entityTypes'
 import { ObjectId } from 'bson'
+import Grid from '@material-ui/core/Grid'
+import makeStyles from '@material-ui/core/styles/makeStyles'
+
+const useStyles = makeStyles({
+  scheduleMenu: {
+    overflowY: 'auto',
+    height: 'calc(100vh - 88px)',
+    width: 240
+  }
+})
 
 interface Props {
   professionals: Professional[],
@@ -15,42 +25,46 @@ interface Props {
 }
 
 const ScheduleMenu: React.FC<Props> = ({ professionals, selectedProfessionals, setSelected }) => {
-  return (
-    <Container>
-      <List id="professionals-list" component="nav">
-        {professionals.map((p) => {
-          const selectedIndex = selectedProfessionals.indexOf(p._id)
-          const isSelected = selectedIndex !== -1
+  const classes = useStyles()
 
-          return (
-            <ListItem
-              key={p._id.toHexString()}
-              dense
-              button
-              onClick={() => {
-                setSelected(prevState => {
-                  const newSelectedProfessionals = [...prevState]
-                  isSelected
-                    ? newSelectedProfessionals.splice(selectedIndex, 1)
-                    : newSelectedProfessionals.push(p._id)
-                  return newSelectedProfessionals
-                })
-              }}
-            >
-              <ListItemIcon>
-                <Checkbox
-                  edge="end"
-                  checked={isSelected}
-                  tabIndex={-1}
-                  disableRipple
-                />
-              </ListItemIcon>
-              <ListItemText primary={`${p.firstName} ${p.lastName}`}/>
-            </ListItem>
-          )
-        })}
-      </List>
-    </Container>
+  return (
+    <Grid item className={classes.scheduleMenu}>
+      <Container>
+        <List id="professionals-list" component="nav">
+          {professionals.map((p) => {
+            const selectedIndex = selectedProfessionals.indexOf(p._id)
+            const isSelected = selectedIndex !== -1
+
+            return (
+              <ListItem
+                key={p._id.toHexString()}
+                dense
+                button
+                onClick={() => {
+                  setSelected(prevState => {
+                    const newSelectedProfessionals = [...prevState]
+                    isSelected
+                      ? newSelectedProfessionals.splice(selectedIndex, 1)
+                      : newSelectedProfessionals.push(p._id)
+                    return newSelectedProfessionals
+                  })
+                }}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    edge="end"
+                    checked={isSelected}
+                    tabIndex={-1}
+                    disableRipple
+                  />
+                </ListItemIcon>
+                <ListItemText primary={`${p.firstName} ${p.lastName}`}/>
+              </ListItem>
+            )
+          })}
+        </List>
+      </Container>
+    </Grid>
   )
 }
 export default ScheduleMenu
