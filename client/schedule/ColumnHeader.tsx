@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     marginLeft: -1,
     position: 'relative',
     backgroundColor: 'white',
-    zIndex: 2
+    zIndex: 3
   }
 })
 
