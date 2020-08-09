@@ -29,6 +29,9 @@ const ToolbarContent: React.FC = () => {
       {user && pathname !== '/register' &&
       <Button onClick={() => dispatch(logOut())} variant="text" color="inherit">Cerrar sesión</Button>
       }
+      {user && pathname !== '/schedule' &&
+      <Button onClick={() => push('/schedule')} variant="text" color="inherit">Calendario</Button>
+      }
       {!user && pathname !== '/login' &&
       <Button onClick={() => push('/login')} variant="text" color="inherit">Iniciar sesión</Button>
       }
