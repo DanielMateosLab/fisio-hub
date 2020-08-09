@@ -1,14 +1,14 @@
 import React from 'react'
 import Grid from '@material-ui/core/Grid'
 import AppointmentCard from './AppointmentCard'
-import { mockAppointment } from '../../__test__/testUtils'
 import EmptyGapButton from './EmptyGapButton'
 import makeStyles from '@material-ui/core/styles/makeStyles'
 import { borderStyle, itemHeight, itemWidth } from './cssValues'
 import teal from '@material-ui/core/colors/teal'
 import { Professional } from '../../common/entityTypes'
-import { Moment } from 'moment'
+import moment, { Moment } from 'moment'
 import ColumnHeader from './ColumnHeader'
+import { appointments } from './mockData'
 
 const useStyles = makeStyles({
   columnContainer: {
@@ -36,7 +36,7 @@ interface Props {
 
 const AppointmentsColumns: React.FC<Props> = props => {
   const classes = useStyles()
-
+  
   return (
     <Grid
       item
@@ -56,7 +56,7 @@ const AppointmentsColumns: React.FC<Props> = props => {
               for (let i = 0; i < props.gapCount; i++) {
                 appointmentGaps.push(
                   <Grid item container className={classes.gap} key={`${professional._id}.${i}`}>
-                    { i == 20 ? <AppointmentCard appointment={mockAppointment} /> :
+                    { i == moment().hours() + 1 ? <AppointmentCard appointment={appointments[0]} /> :
                       <EmptyGapButton
                         timeText={props.getGapDate(i).format("HH:mm")}
                         showTimeInEmptyGaps={!props.showLeftHeaderTimeCaptions}
