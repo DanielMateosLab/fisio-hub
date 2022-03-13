@@ -1,7 +1,6 @@
 version: "3.7"
 
 services:
-
   rs1:
     image: mongo:4.2.5
     volumes:
@@ -24,7 +23,7 @@ services:
 
   server:
     image: node:12.16.1
-    command: sh -c "yarn wait-port rs1:27017 && yarn dev"
+    command: sh -c "yarn install && yarn wait-port rs1:27017 && yarn dev"
     working_dir: /fisio-hub
     volumes:
       - ./:/fisio-hub
@@ -33,8 +32,8 @@ services:
       DB_URI_ADMIN: "mongodb://rs1,rs2,rs3/?replicaSet=replSet"
     ports:
       - 3000:3000
-    
-volumes: 
+
+volumes:
   fisiohubdb1:
   fisiohubdb2:
   fisiohubdb3:
